@@ -1,0 +1,159 @@
+/* Updated CSS */
+
+/* Reset some default styles for better consistency */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* Header styles */
+.navbar {
+    background-color: black;
+    padding: 0;
+    border-bottom: 1px solid rgba(230, 174, 49);
+}
+
+.navbar-brand h3 {
+    font-family: Italianno;
+}
+
+.nav-link {
+    color: white;
+    font-family: Italianno;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+/* Change the color of the navigation links on hover */
+.navbar-nav .nav-item a:hover {
+    color: rgba(230, 174, 49);
+}
+
+/* Custom CSS to change the background color of the dropdown menu */
+.dropdown-menu {
+    background-color: white; /* Replace with your desired background color */
+}
+
+/* Custom CSS to change the text color of links in the dropdown menu */
+.dropdown-menu a {
+    color: rgba(230, 174, 49); /* Replace with your desired text color */
+    font-family: Italianno;
+}
+
+/* Center the content vertically and horizontally */
+.container-1 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Center the form vertically */
+    background-color: #0a0a0a; /* Add your preferred background color */
+}
+
+/* Style the login form container */
+.login-form {
+    background-color: #0a0a0a;
+    box-shadow: 0px 0px 10px rgba(230, 174, 49);
+    border-radius: 5px;
+    padding: 20px;
+    width: 90%; /* Adjust the width for default laptop-sized screens */
+    max-width: 400px; /* Set a maximum width for larger screens */
+    text-align: center;
+    height: auto; /* Allow the form height to adjust to content */
+    margin: 20px; /* Add margin to separate the form from the edges */
+}
+
+.login-form h2 {
+    color: white;
+}
+
+.form-group {
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+label {
+    font-weight: bold;
+    color: white;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #FA8232;
+    border-radius: 5px;
+    margin-top: 5px;
+    margin-bottom: 10px; /* Add margin-bottom for better spacing */
+}
+
+.login-button {
+    background-color: #FA8232; /* Change to your preferred button color */
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.login-button:hover {
+    background-color: #F57000; /* Change to a slightly darker shade for hover effect */
+}
+
+/* Style the "Continue with Google" button */
+.google-button {
+    background-color: #fff; /* Change to your preferred button color */
+    color: #007bff;
+    border: 1px solid #007bff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.google-button:hover {
+    background-color: #007bff;
+    color: #fff;
+}
+
+/* Style the Google icon */
+.google-button img {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+}
+
+/* Divider */
+.divider {
+    color: white;
+    margin: 20px 0;
+    font-weight: bold;
+}
+
+/* Media Query for smaller screens (up to 768px) */
+@media (max-width: 768px) {
+    .login-form {
+        width: 90%; /* Adjust width for smaller screens */
+    }
+
+    input {
+        padding: 8px; /* Reduce padding for smaller screens */
+    }
+}
+
+/* Media Query for even smaller screens (up to 480px) */
+@media (max-width: 480px) {
+    .login-form {
+        width: 95%; /* Adjust width for very small screens */
+    }
+
+    input {
+        padding: 6px; /* Further reduce padding for very small screens */
+    }
+}

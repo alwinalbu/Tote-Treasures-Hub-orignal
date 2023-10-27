@@ -1,0 +1,96 @@
+/* Reset default margin and padding */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  /* Body styles */
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #080808;
+    color: white;
+  }
+  
+  .bg-custom {
+    /* background: linear-gradient(90deg, rgb(0, 0, 0), rgb(0, 0, 0));  */
+    border-bottom: 2px solid #FFA932; /* Customize the border color */
+}
+.white-text {
+  color: white;
+  font-weight: 700;
+}
+  /* Header styles */
+  .header {
+    color: white;
+    font-weight: 700;
+    text-align: center;
+    /* padding: 20px; */
+    font-family: 'Italianno', cursive;
+  }
+  
+  .main-nav{
+    background-image: linear-gradient(to right, rgb(19, 2, 31), rgb(213, 236, 129));
+    border-bottom: 3px solid #FFA932;
+  }
+
+  .header h1 {
+    font-size: 36px;
+  }
+  
+  /* Offcanvas button styles */
+  .position-sticky {
+    position: sticky;
+    /* top: 80px; */
+    left: 20px;
+    z-index: 1;
+  }
+
+  .table-responsive {
+    margin-top: 30px; /* Adjust this value as needed */
+}
+
+.form-group {
+    margin-top: 120px; /* Adjust this value as needed */
+}
+  
+  /* Offcanvas styles */
+  .offcanvas {
+    background-image: linear-gradient(to right, rgb(19, 2, 31), rgb(213, 236, 129));
+    width: 250px;
+  }
+  
+  /* Offcanvas header styles */
+  .offcanvas-header {
+    color: white;
+  }
+  
+  .offcanvas-title {
+    font-size: 20px;
+    padding: 10px;
+  }
+  
+  /* List item styles */
+  .custom-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .custom-list-item {
+    padding: 10px;
+    text-decoration: none;
+    color: #000;
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+  }
+  
+  .custom-list-item i {
+    margin-right: 10px;
+    font-size: 20px;
+  }
+  
+  .custom-list-item:hover {
+    background-color: #f3ffe0;
+  }
+  

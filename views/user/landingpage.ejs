@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ToteTreasures Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href='https://fonts.googleapis.com/css?family=Italianno' rel='stylesheet'>
+    <link rel="stylesheet" type="text/css" href="/css/landingpage.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: black;">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <a class="navbar-brand" href="/homepage">
+                <img src="/images/logo.png" style="max-height: 70px" alt="auto">
+                <h3 class="text-white fw-bold m-0 d-inline align-middle">ToteTreasures Hub</h3>
+            </a>
+
+            <!-- Move the search form outside of the collapse button -->
+            <form class="d-flex" role="search">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto"> <!-- Add ms-auto class -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="/homepage">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/shop">Shop</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/About Us">About Us <i class="fa-solid fa-heart text-danger"></i></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/cart">Cart <i class="fa-solid fa-cart-shopping text-primary"></i></a>
+                    </li>
+                    <li class="nav-item ml-auto"> <!-- Use ml-auto to push items to the right -->
+                        <% if (user) { %>
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle nav-link" id="usernameLink" data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                    <%= user.Username %> <i class="fa-solid fa-user"></i>
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="usernameLink">
+                                    <li><a class="dropdown-item" href="/profile">Profile</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider" />
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="/logout" id="logoutLink">Logout</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <% } else { %>
+                                <div class="d-flex align-items-center"> <!-- Add a div wrapper -->
+                                    <a class="nav-link" href="/signup">
+                                        <i class="fa-solid fa-user-plus"></i> Sign Up
+                                    </a>
+                                    <span class="nav-link">|</span> <!-- Use a delimiter like "|" -->
+                                    <a class="nav-link" href="/login">
+                                        <i class="fa-solid fa-sign-in-alt"></i> Login
+                                    </a>
+                                </div>
+                                <% } %>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"
+                aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"
+                aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"
+                aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="/images/bag image 2.jpg" class="d-block w-100" alt="...">
+            </div>
+            <div class="carousel-item">
+                <img src="/images/banner 2.jpg" class="d-block w-100" alt="...">
+            </div>
+            <div class="carousel-item">
+                <img src="/images/banner 3.jpg" class="d-block w-100" alt="...">
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
+            data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
+            data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+
+    <section style="background-color: rgb(0, 0, 0);">
+        <div class="banner banner-1 container-fluid p-0">
+            <video autoplay class="img-fluid" style="object-fit: cover; width: 100%; height:450px;" controls>
+                <source src="/video/wallet video.mp4" type="video/mp4">
+                <!-- Your browser does not support the video tag. -->
+            </video>
+        </div>
+
+        <div class=" text-center" style="background-color: rgb(15, 15, 15);">
+            <div class="text center">
+                <h5 class="icons categories text-white">SHOP FOR</h5>
+            </div>
+            <div class="container">
+                <div class="row d-flex justify-content-center">
+                    <% categories.forEach(function(category) { %>
+                        <div class="col-2 icons ">
+                            <a href="/category/<%= category._id %>"><img style="width: 250px; height: 250px;"
+                                    class="mx-2 " src="/uploads/<%=category.image %>" alt="Image 1"></a>
+                            <span style="color: white;">
+                                <%= category.Name %>
+                            </span>
+                        </div>
+                        <% }); %>
+                </div>
+            </div>
+        </div>
+        <div class="products container">
+            <div class="product-title d-flex justify-content-center align-items-center">
+                <h2 class="ps-5 text-center text-white">New Arrivals</h2>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <% products.forEach(function(product) { %>
+                        <div class=" col-lg-4 col-xl-3 col-sm-6 mb-4 equal-width">
+                            <div class="card">
+                                <img src="/uploads/<%= product.images[0] %>" class="card-img-top "
+                                    style=" height: 40vh;" alt="">
+                                <div class="card-body d-flex flex-column justify-content-between"
+                                    style=" height: 30vh;">
+                                    <h5 class="card-title text-center">
+                                        <%= product.ProductName %>
+                                    </h5>
+                                    <div class="d-flex flex-column justify-content-center">
+                                        <% if (product.AvailableQuantity===0) { %>
+                                            <div style="background-color: red;">
+                                                <p class="card-text text-center text-light">Out of Stock</p>
+                                            </div>
+                                            <% } else { %>
+                                                <p class="card-text text-center text-danger"><del> ₹<%= product.Price %></del></p>
+                                                <p class="card-text text-center text-success">DiscountAmount ₹<%= product.DiscountAmount %></p>
+                                                <a href="/productViewDetailspage/<%= product._id %>"
+                                                    class="btn btn-primary text-center">View Details</a>
+                                                <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <% }); %>
+                </div>
+            </div>
+
+
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

@@ -1,0 +1,156 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ToteTreasures Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href='https://fonts.googleapis.com/css?family=Italianno' rel='stylesheet'>
+    <link rel="stylesheet" type="text/css" href="/css/landingpage.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: black;">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+        <a class="navbar-brand" href="/homepage">
+            <img src="/images/logo.png" style="max-height: 70px" alt="auto">
+            <h3 class="text-white fw-bold m-0 d-inline align-middle">ToteTreasures Hub</h3>
+        </a>
+
+        <!-- Move the search form outside of the collapse button -->
+        <form class="d-flex" role="search">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto"> <!-- Add ms-auto class -->
+                <li class="nav-item">
+                    <a class="nav-link" href="/homepage">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/shop">Shop</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/About Us">About Us <i class="fa-solid fa-heart text-danger"></i></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/cart">Cart <i class="fa-solid fa-cart-shopping text-primary"></i></a>
+                </li>
+                <li class="nav-item ml-auto"> <!-- Use ml-auto to push items to the right -->
+                    <% if (user) { %>
+                    <div class="dropdown">
+                        <a href="#" class="dropdown-toggle nav-link" id="usernameLink" data-bs-toggle="dropdown" aria-expanded="false">
+                            <%= user.Username %> <i class="fa-solid fa-user"></i>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="usernameLink">
+                            <li><a class="dropdown-item" href="/profile">Profile</a></li>
+                            <li><hr class="dropdown-divider" /></li>
+                            <li>
+                                <a class="dropdown-item" href="/logout" id="logoutLink">Logout</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <% } else { %>
+                    <div class="d-flex align-items-center"> <!-- Add a div wrapper -->
+                        <a class="nav-link" href="/signup">
+                            <i class="fa-solid fa-user-plus"></i> Sign Up
+                        </a>
+                        <span class="nav-link">|</span> <!-- Use a delimiter like "|" -->
+                        <a class="nav-link" href="/login">
+                            <i class="fa-solid fa-sign-in-alt"></i> Login
+                        </a>
+                    </div>
+                    <% } %>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row justify-content-center p-3">
+        <div class="col-lg-6 col-md-8 col-sm-10 col-12">
+            <div class="row product-img justify-content-center">
+                <div class="col-12  text-center">
+                    <img src="/uploads/<%= product.images[0] %>" class="img-fluid" alt="">
+                </div>
+                <div class="col-4 col-sm-3 col-md-2 my-2">
+                    <img src="/uploads/<%= product.images[1] %>" class="img-fluid" alt="">
+                </div>
+                <div class="col-4 col-sm-3 col-md-2 my-2">
+                    <img src="/uploads/<%= product.images[2] %>" class="img-fluid" alt="">
+                </div>
+                <!-- <div class="col-4 col-sm-3 col-md-2 my-2">
+                    <img src="/uploads/" class="img-fluid" alt="">
+                </div> -->
+            </div>
+        </div>
+
+        <div class="col-lg-6 col-md-8 col-sm-10 col-12">
+            <table class="table">
+                <tr>
+                    <td>Product Name</td>
+                    <th><%= product.ProductName %></th>
+                </tr>
+                <tr>
+                    <td>Description</td>
+                    <th><%= product.Description %></th>
+                </tr>
+                <tr>
+                    <td>Specification</td>
+                    <th><%= product.Specification1%></th>
+                </tr>
+                <tr>
+                    <td>Brand</td>
+                    <th><%= product.BrandName.Name %></th>
+                </tr>
+                <tr>
+                    <td>Category</td>
+                    <th><%= product.Category.Name %></th>
+                </tr>
+                <tr>
+                    <td>Price</td>
+                    <th class="text-danger"><del><%= product.Price %></del></th>
+                </tr>
+                <tr>
+                    <td> DiscountAmount</td>
+                    <th class="text-success"><%= product.DiscountAmount%></th>
+                </tr>
+                <tr>
+                    <td>Stock</td>
+                    <th><%= product.AvailableQuantity %></th>
+                </tr>
+            </table>
+            <div class="d-flex justify-content-around my-3">
+                <a href="#" class="btn btn-warning" id="addToCartButton">Add To Cart</a>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+document.getElementById("addToCartButton").addEventListener("click", function() {
+    // Check if the user is authenticated (you can use your own logic here)
+    if (user) {
+        // Redirect to the cart page
+        window.location.href = "/cart";
+    } else {
+        // Redirect to the login page
+        window.location.href = "/login";
+    }
+});
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+crossorigin="anonymous"></script>
+</body>
+</html>
