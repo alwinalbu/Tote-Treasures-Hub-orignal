@@ -3,8 +3,8 @@ const router=express.Router()
 const userController=require('../controllers/userController')
 const Product=require('../models/productSchema')
 const userAuth=require('../middlewares/userAuth')
-const { userSignupValidation, validate } = require('../middlewares/validation'); // Import your validation middleware
-const { passwordValidation,confirmPasswordValidation}=require('../middlewares/validation')
+const { userSignupValidation, validate } = require('../middlewares/signupvalidation'); // Import your validation middleware
+const {passwordValidation,confirmPasswordValidation,passvalidate,} = require('../middlewares/newpasswordvalidate');
 
 router.route('/')
 .get(userController.initial)
@@ -29,7 +29,11 @@ router.route('/passwordResendOtp')
 
 router.route('/createNewPassword')
 .get(userAuth.userExist,userController.getCreateNewPassword)
-.post(userAuth.userExist,passwordValidation,confirmPasswordValidation,userController.postCreateNewPassword)
+.post( userAuth.userExist, // Ensure user exists
+passwordValidation, // Apply password validation middleware
+confirmPasswordValidation, // Apply confirmPassword validation middleware
+passvalidate, // Apply the validation results check middleware
+  userController.postCreateNewPassword)
 
 // router.route('/signup')
 // .get(userController.signup)
@@ -51,8 +55,53 @@ router.route('/resendOtp')
 .post(userController.otpAuth)
 
 router.route('/productViewDetailspage/:id')
-.get(userController.getproductViewDetailspage)
+.get(userAuth.userTokenAuth,userController.getproductViewDetailspage)
 
+// -----------------------------------cart-----------------------------------------------------------------
+
+router.route('/cartpage')
+.get(userAuth.userTokenAuth,userController.getCartpage)
+
+
+router.route('/addtocart/:_id')
+.get(userAuth.userTokenAuth,userController.addtocart)
+
+
+router.route('/updateQuantity')
+.post(userAuth.userTokenAuth,userController.updateQuantity)
+
+
+router.route('/removefromcart/:_id')
+.get(userAuth.userTokenAuth,userController.removeItemFromCart)
+
+
+
+// -----------------------------------------------------User Profile-------------------------------------------
+
+router.route('/profile')
+.get(userAuth.userTokenAuth,userController.profile)
+
+router.route('/addAddress')
+.post(userAuth.userTokenAuth, userController.postAddressForm)
+
+
+router.route('/editAddress')
+.get(userAuth.userTokenAuth,userController.getEditAddress)
+
+router.route('/editAddress/:_id')
+.post(userAuth.userTokenAuth,userController.postEditAddress)
+
+router.route('/deleteAddress/:_id')
+.get(userAuth.userTokenAuth,userController.deleteAddress)
+
+
+
+
+
+
+
+
+// -----------------------------------------------logout-------------------------------------------------------
 
 router.route('/logout')
 .get(userController.getUserLogout)

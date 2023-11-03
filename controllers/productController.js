@@ -58,10 +58,10 @@ module.exports = {
       
           // Redirect to the appropriate route after successfully adding the product
           req.flash("success", "Product is Added Successfully");
-          res.redirect("/admin/addProduct");
+         
         } catch (error) {
-          console.error(`An error happened: ${error}`);
-          res.status(500).send('Internal Server Error');
+          req.flash('error', `${error}`);
+          res.redirect("/admin/addProduct");
         }
       },
 
@@ -105,7 +105,6 @@ module.exports = {
         res.redirect("/admin/product");
        }
       },
-
 
       getviewProductDetails: async (req, res) => {
         const _id = req.params._id;
@@ -167,13 +166,13 @@ module.exports = {
           if (req.body.AvailableQuantity <= 0) {
             req.body.Status = "Out of Stock";
           }
-
-
+          
           const uploaded = await Product.findByIdAndUpdate(_id, req.body);
           req.flash("success", "Product is Updated Successfully");
           res.redirect("/admin/addProduct");
         } catch (error) {
           console.log(`An error happened ${error}`);
+          res.redirect("/admin/editproduct");
         }
       },
 

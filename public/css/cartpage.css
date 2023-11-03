@@ -1,0 +1,66 @@
+/* Reset some default styles for better consistency */
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+.navbar {
+  background-color: black;
+  padding: 0;
+  border-bottom: 1px solid rgba(230, 174, 49);
+}
+
+.navbar-brand h3 {
+  font-family: Italianno;
+}
+
+.nav-link {
+  color: white;
+  font-family: Italianno;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+/* Change the color of the navigation links on hover */
+/* .navbar-nav .nav-item a:hover {
+  color: rgba(230, 174, 49);
+} */
+
+/* Custom CSS to change the background color of the dropdown menu */
+/* .dropdown-menu {
+  background-color: white; 
+} */
+
+/* Custom CSS to change the text color of links in the dropdown menu */
+/* .dropdown-menu a {
+  color: rgba(230, 174, 49); 
+  font-family: Italianno;
+} */
+
+/* ------------------------CARTPAGE--------------------------- */
+
+/* .icon-hover-primary:hover {
+  border-color: #3b71ca !important;
+  background-color: white !important;
+}
+
+.icon-hover-primary:hover i {
+  color: #3b71ca !important;
+}
+.icon-hover-danger:hover {
+  border-color: #dc4c64 !important;
+  background-color: white !important;
+}
+
+.icon-hover-danger:hover i {
+  color: #dc4c64 !important
+}
+.transparent-input {
+  border: none;
+  background-color: transparent;
+  color: inherit;
+  width: 12vw;
+  font-size: inherit;
+  text-align: right; 
+} */

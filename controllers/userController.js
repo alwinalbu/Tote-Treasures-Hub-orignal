@@ -1,7 +1,8 @@
 const User = require('../models/userSchema')
-const Category=require('../models/categorySchema')
-const Product=require('../models/productSchema')
-const Brand=require('../models/brandSchema')
+const Category = require('../models/categorySchema')
+const Product = require('../models/productSchema')
+const Brand = require('../models/brandSchema')
+const Cart = require("../models/cartSchema")
 const bcrypt = require('bcrypt')
 const nodemailer = require('nodemailer');
 const jwt = require("jsonwebtoken");
@@ -15,25 +16,25 @@ module.exports = {
         try {
             const categories = await Category.find();
             const products = await Product.find({ Display: "Active" })
-            res.render("user/landingpage", {user:'',products,categories});
+            res.render("user/landingpage", { user: '', products, categories });
         } catch (error) {
             console.log(error);
         }
     },
 
-    
+
     home: async (req, res) => {
         try {
             const categories = await Category.find();
             const products = await Product.find({ Display: "Active" })
-            res.render("user/homepage", {user: req.session.user,products,categories});
+            res.render("user/homepage", { user: req.session.user, products, categories });
         } catch (error) {
             console.log(error);
         }
     },
 
     login: (req, res) => {
-        res.render('./user/login', { error: req.session.error,user: req.session.user });
+        res.render('user/login', { error: req.session.error, user: req.session.user });
     },
 
     userLogin: async (req, res) => {
@@ -41,45 +42,51 @@ module.exports = {
             // Extract email and password from req.body
             const email = req.body.Email;
             const password = req.body.Password;
-    
+
             // Attempt to find a user in the database based on the provided email.
             const user = await User.findOne({ Email: email });
-    
+
             console.log('login email', email);
             console.log('user:', user);
-    
-            // Check if the user exists and their status is "Active" before proceeding.
-            if (user && user.Status === "Active") {
-                // Compare the provided password with the stored hashed password.
-                const passwordMatch = await bcrypt.compare(password, user.Password);
-    
-                console.log('Password:', password);
-                console.log('Password Match:', passwordMatch);
 
-                // If the passwords match, create a JSON Web Token (JWT).
-                if (passwordMatch) {
-                    const accessToken = jwt.sign(
-                        { user: user._id },
-                        process.env.ACCESS_TOKEN_SECRET,
-                        { expiresIn: '1h' } // Set the expiration time as needed
-                    );
-    
-                    // Set the JWT as a cookie.
-                    res.cookie('userJwt', accessToken, { maxAge: 60 * 60 * 1000 });
-    
-                    // Store user information in the session.
-                    req.session.user = user;
-    
-                    // Redirect to the user's homepage.
-                    return res.redirect('/homepage');
+            // Check if the user exists and their status is "Active" before proceeding.
+            if (user) {
+                if (user.Status === "Active") {
+                    // Compare the provided password with the stored hashed password.
+                    const passwordMatch = await bcrypt.compare(password, user.Password);
+
+                    console.log('Password:', password);
+                    console.log('Password Match:', passwordMatch);
+
+                    // If the passwords match, create a JSON Web Token (JWT).
+                    if (passwordMatch) {
+                        const accessToken = jwt.sign(
+                            { user: user._id },
+                            process.env.ACCESS_TOKEN_SECRET,
+                            { expiresIn: '1h' } // Set the expiration time as needed
+                        );
+
+                        // Set the JWT as a cookie.
+                        res.cookie('userJwt', accessToken, { maxAge: 60 * 60 * 1000 });
+
+                        // Store user information in the session.
+                        req.session.user = user;
+
+                        // Redirect to the user's homepage.
+                        return res.redirect('/homepage');
+                    } else {
+                        // If passwords don't match, show an error and redirect to the login page.
+                        req.flash('error', 'Invalid username or password');
+                        return res.redirect('/login');
+                    }
                 } else {
-                    // If passwords don't match, show an error and redirect to the login page.
-                    req.flash('error', 'Invalid username or password');
+                    // If the user's status is not "Active," show an error and redirect to the login page.
+                    req.flash('error', 'User is Blocked');
                     return res.redirect('/login');
                 }
             } else {
-                // If no user is found or user's status is not "Active," show an error and redirect to the login page.
-                req.flash('error', 'Blocked Invalid username or password');
+                // If no user is found, show an error and redirect to the login page.
+                req.flash('error', 'User Email is NOT Verified So please Verify With OTP');
                 return res.redirect('/login');
             }
         } catch (error) {
@@ -90,128 +97,66 @@ module.exports = {
         }
     },
 
+
     signup: (req, res) => {
         const error = req.flash('error'); // Get the error message from flash (if it exists)
-        res.render("user/signup", { err: error, user:'' });
-      },
-      
-    // postUserSignup: async (req, res) => {
-    //     try {
-    //         const saltRounds = 10;
-    //         const salt = await bcrypt.genSalt(saltRounds);
-    
-    //         const username = req.body.Username; // Capture the user's username
-    //         const password = req.body.Password;
-    //         const confirmPassword = req.body.confirmPassword;
-    
-    //         if (password && confirmPassword) {
-    //             // Hash the password using bcrypt
-    //             const hashedPassword = await bcrypt.hash(password, salt);
-    //             const hashedConfirmPassword = await bcrypt.hash(confirmPassword, salt);
-    
-    //             // Log the hashed password and hashedConfirmPassword
-    //             console.log('Hashed Password:', hashedPassword);
-    //             console.log('Hashed Confirm Password:', hashedConfirmPassword);
-    
-    //             const email = req.body.Email;
-    
-    //             const emailRegex = /^([a-zA-Z0-9\._]+)@([a-zA-Z0-9]+)\.([a-z]+)(\.[a-z]+)?/;
-    
-    //             // Testing the email
-    //             const isValidEmail = emailRegex.test(email);
-    
-    //             if (isValidEmail) {
-    //                 req.session.user = {
-    //                     Username: username,
-    //                     Email: email,
-    //                     Password:hashedPassword
-    //                 };
-    //                 const existingUser = await User.findOne({ Email: email });
-    
-    //                 if (existingUser) {
-    //                     req.flash("error", "Email already exists");
-    //                     console.log("Email already there");
-    //                     res.redirect("/signup");
-    //                 } else {
-    //                     otpToBeSent = otpFunctions.generateOTP();
-    //                     const result = otpFunctions.sendOTP(req, res, email, otpToBeSent);
-    //                 }
-    //             } else {
-    //                 req.flash("error", "Invalid email address");
-    //                 res.redirect('/signup');
-    //                 console.log("Invalid email address");
-    //             }
-    
-    //             // Compare the hashed password and hashedConfirmPassword
-    //             if (hashedPassword === hashedConfirmPassword) {
-    //                 console.log('Password and ConfirmPassword match.');
-    //             } else {
-    //                 console.log('Password and ConfirmPassword do not match.');
-    //             }
-    //         } else {
-    //             req.flash("error", "Passwords are missing");
-    //             res.redirect("/signup");
-    //         }
-    //     } catch (error) {
-    //         console.error(error);
-    //         req.flash("error", "An error occurred during signup.");
-    //         res.redirect("/signup");
-    //     }
-    // }, 
+        res.render("user/signup", { err: error, user: '' });
+    },
+
 
     postUserSignup: async (req, res) => {
         try {
-          const saltRounds = 10;
-          const salt = await bcrypt.genSalt(saltRounds);
-      
-          const username = req.body.Username;
-          const password = req.body.Password;
-          const confirmPassword = req.body.confirmPassword;
-      
-          if (password && confirmPassword) {
-            const hashedPassword = await bcrypt.hash(password, salt);
-            const hashedConfirmPassword = await bcrypt.hash(confirmPassword, salt);
-      
-            // Log the hashed password and hashedConfirmPassword
-            console.log('Hashed Password:', hashedPassword);
-            console.log('Hashed Confirm Password:', hashedConfirmPassword);
-      
-            const email = req.body.Email;
-      
-            req.session.user = {
-              Username: username,
-              Email: email,
-              Password: hashedPassword
-            };
-      
-            const existingUser = await User.findOne({ Email: email });
-      
-            if (existingUser) {
-              req.flash("error", "Email already exists");
-              console.log("Email already exists");
-              res.redirect("/signup");
+            const saltRounds = 10;
+            const salt = await bcrypt.genSalt(saltRounds);
+
+            const username = req.body.Username;
+            const password = req.body.Password;
+            const confirmPassword = req.body.confirmPassword;
+
+            if (password && confirmPassword) {
+                const hashedPassword = await bcrypt.hash(password, salt);
+                const hashedConfirmPassword = await bcrypt.hash(confirmPassword, salt);
+
+                // Log the hashed password and hashedConfirmPassword
+                console.log('Hashed Password:', hashedPassword);
+                console.log('Hashed Confirm Password:', hashedConfirmPassword);
+
+                const email = req.body.Email;
+
+                req.session.user = {
+                    Username: username,
+                    Email: email,
+                    Password: hashedPassword
+                };
+
+                const existingUser = await User.findOne({ Email: email });
+
+                if (existingUser) {
+                    req.flash("error", "Email already exists");
+                    console.log("Email already exists");
+                    res.redirect("/signup");
+                } else {
+                    otpToBeSent = otpFunctions.generateOTP();
+                    const result = otpFunctions.sendOTP(req, res, email, otpToBeSent);
+                }
+
+                // Compare the hashed password and hashedConfirmPassword
+                if (hashedPassword === hashedConfirmPassword) {
+                    console.log('Password and ConfirmPassword match.');
+                } else {
+                    console.log('Password and ConfirmPassword do not match.');
+                }
             } else {
-              otpToBeSent = otpFunctions.generateOTP();
-              const result = otpFunctions.sendOTP(req, res, email, otpToBeSent);
+                req.flash("error", "Passwords are missing");
+                res.redirect("/signup");
             }
-            
-            // Compare the hashed password and hashedConfirmPassword
-            if (hashedPassword === hashedConfirmPassword) {
-              console.log('Password and ConfirmPassword match.');
-            } else {
-              console.log('Password and ConfirmPassword do not match.');
-            }
-          } else {
-            req.flash("error", "Passwords are missing");
-            res.redirect("/signup");
-          }
         } catch (error) {
-          console.error(error);
-          req.flash("error", "An error occurred during signup.");
-          res.redirect("/signup");
+            console.error(error);
+            req.flash("error", "An error occurred during signup.");
+            res.redirect("/signup");
         }
-      },
-      
+    },
+
 
     getemailVerification: async (req, res) => {
         try {
@@ -228,7 +173,7 @@ module.exports = {
                         console.error(err);
                     });
             }, 60000);
-            res.render("user/emailVerification", { messages: req.flash(),user:'' });
+            res.render("user/emailVerification", { messages: req.flash(), user: '' });
         } catch (error) {
             console.log(error);
             res.redirect("/signup");
@@ -327,21 +272,31 @@ module.exports = {
 
     forgotpassword: (req, res) => {
         res.render("user/forgotPassword", {
-            messages: req.flash(),user: req.session.user});
+            messages: req.flash(), user: req.session.user
+        });
     },
     postforgotpassword: async (req, res) => {
         try {
             req.session.Email = req.body.Email;
             const Email = req.body.Email;
-            console.log("1223",Email)
+            console.log("1223", Email)
             const userData = await User.findOne({ Email: Email });
+            console.log("user email is :", userData)
             if (userData) {
-                otpToBeSent = otpFunctions.generateOTP();
-                const result = otpFunctions.passwordsendOTP(req, res, Email, otpToBeSent);
+                if (userData.Status === "Active") {
+
+                    otpToBeSent = otpFunctions.generateOTP();
+                    const result = otpFunctions.passwordsendOTP(req, res, Email, otpToBeSent);
+
+                } else {
+
+                    req.flash("error", "Email is BLocked ");
+                    res.redirect("/forgotpassword")
+                }
 
             } else {
                 req.flash("error", "Email Not Registesred");
-                res.redirect("/otpVerification")
+                res.redirect("/forgotpassword")
             }
         } catch (error) {
             console.log(error);
@@ -353,7 +308,7 @@ module.exports = {
         try {
             const duration = 60;
             const Email = req.session.Email;
-            console.log("resend email is ",Email);
+            console.log("resend email is ", Email);
             otpToBeSent = otpFunctions.generateOTP();
             console.log(otpToBeSent);
             const result = otpFunctions.passwordresendOTP(req, res, Email, otpToBeSent);
@@ -368,7 +323,7 @@ module.exports = {
         try {
             // email is taken from the input 
             const Email = req.session.Email;
-            console.log("this is new eamil",Email);
+            console.log("this is new eamil", Email);
             // a timeout function to deleted the old otp after 1 minute
             setTimeout(() => {
                 OTP.deleteOne({ Email: Email })
@@ -379,21 +334,21 @@ module.exports = {
                         console.error(err);
                     });
             }, 60000);
-            res.render("user/otpVerification", { messages: req.flash(),user: req.session.user });
+            res.render("user/otpVerification", { messages: req.flash(), user: req.session.user });
         } catch (error) {
             console.log(error);
             res.redirect("/login");
         }
     },
-    passwordOtpAuth: async (req, res,next) => {
+    passwordOtpAuth: async (req, res, next) => {
         try {
-           
+
             let { otp } = req.body;
 
             // Ensure an OTP record exists for the email
-               console.log(req.session.Email);
-              const matchedOTPrecord = await OTP.findOne({
-           Email: req.session.Email,
+            console.log(req.session.Email);
+            const matchedOTPrecord = await OTP.findOne({
+                Email: req.session.Email,
             });
 
             if (!matchedOTPrecord) {
@@ -439,32 +394,32 @@ module.exports = {
     },
 
     getCreateNewPassword: async (req, res) => {
-        res.render('user/changePassword',{ messages: req.flash(),user: req.session.user })
+        res.render('user/changePassword', { messages: req.flash(), user: req.session.user })
     },
 
     postCreateNewPassword: async (req, res) => {
         try {
-            const user = await User.findOne({ Email: req.session.Email })
-            if (req.body.Password === req.body.confirmPassword) {
-                const hashedPassword = await bcrypt.hash(req.body.Password, 8);
-                const updatedUser = await User.updateOne({ _id: user._id },{ $set: { Password: hashedPassword } });
-                console.log(hashedPassword);
-                if(!updatedUser){
-                    throw new Error('Error updating password');
-                    }
-                    const accessToken = jwt.sign(
-                      { user: user._id },
-                      process.env.ACCESS_TOKEN_SECRET,
-                      { expiresIn: 60 * 60 }
-                    );
-                    res.cookie("userJwt", accessToken, { maxAge: 60 * 1000 * 60 });
-                    req.session.user = user;
-                    res.redirect("/homepage");
+            const user = await User.findOne({ Email: req.session.Email });
 
-            } else {
-                req.flash("error", "Passwords do not match!");
-                res.redirect('/createNewPassword');
+            const pass = req.body.Password;
+            console.log(pass);
+
+            const hashedPassword = await bcrypt.hash(req.body.Password, 8);
+
+            const updatedUser = await User.updateOne({ _id: user._id }, { $set: { Password: hashedPassword } });
+
+            if (!updatedUser) {
+                throw new Error('Error updating password');
             }
+
+            const accessToken = jwt.sign(
+                { user: user._id },
+                process.env.ACCESS_TOKEN_SECRET,
+                { expiresIn: 60 * 60 }
+            );
+            res.cookie("userJwt", accessToken, { maxAge: 60 * 1000 * 60 });
+            req.session.user = user;
+            res.redirect("/homepage");
         } catch (error) {
             console.log(error);
             res.redirect("/login");
@@ -477,39 +432,303 @@ module.exports = {
         const brands = await Brand.find();
         const product = await Product.findOne({ _id }).populate('Category BrandName');
         console.log(product);
-    
+
         res.render("./user/productViewDetailspage", {
-          product: product,
-          categories,
-          brands,
-          user: req.session.user,
+            product: product,
+            categories,
+            brands,
+            user: req.session.user,
         });
     },
+
+
+
+
+
+    // ---------------------addtocart---------------------------
+
+
+    addtocart: async (req, res) => {
+        console.log("user session user is ", req.session.user);
+        const userid = req.session.user.user;
+        console.log("userid is:", userid);
+        const productid = req.params._id;
+        console.log("product id is ",productid);
+        const usercart = await Cart.findOne({ UserId: userid });
+
+        console.log("cart is there for user :", usercart)
+
+        if (usercart) {
+
+            const existingItem = usercart.Items.find((item) => {
+                if (item.ProductId && item.ProductId.equals) {
+                    return item.ProductId.equals(productid);
+                }
+                return false;
+            });
+
+            if (existingItem) {
+
+                existingItem.Quantity += 1;
+            } else {
+                usercart.Items.push({ ProductId: productid, Quantity: 1 });
+            }
+
+            await usercart.save();
+            console.log("existing cart is here  updated:", usercart);
+
+        } else {
+            const newcart = new Cart({
+                UserId: userid,
+                Items: [{ ProductId: productid, Quantity: 1 }],
+            });
+            await newcart.save();
+
+            console.log("new cart is here  updated:", newcart);
+        }
+        res.redirect('/cartpage');
+
+    },
+
+
+
+
+    // --------------------------------cartpage---------------------------------------
+
+
+    getCartpage: async (req, res) => {
+
+        const userId = req.session.user.user;
+
+        console.log("user id is to get page here ",userId)
+
+        const user = await User.findById(userId);
+
+        console.log("after finding the user is", user);
+
+        const cart = await Cart.findOne({ UserId: userId }).populate(
+            "Items.ProductId"
+        );
+
+        console.log("cart before getcartpage :", cart);
+
+        res.render("user/cartpage", { user, cart });
+    },
+
+// ----------------------------------------------update Quantity -------------------------------------------------
+updateQuantity:async(req,res)=>{
+    try {
+        const { productId,change }=req.body;
+
+        const userId=req.session.user.user;
+
+        console.log("update side userid",userId)
+
+        const usercart=await Cart.findOne({UserId:userId});
+        const product=await Product.findById(productId);
+
+        console.log("usercart is here",usercart);
+        console.log("product is here",product)
+
+        if(!usercart || !product){
+            return res.status(404).json({error:"Product or Cart cannot be Found "})
+        };
+        const cartItem=usercart.Items.find((item)=>
+         item.ProductId.equals(productId)
+        );
+
+        const newQuantity=cartItem.Quantity+parseInt(change);
+        if(newQuantity<1){
+            usercart.Items=ProductId.Items.filter((item)=>!item.ProductId.equals(productId)); 
+        }else {
+            cartItem.Quantity=newQuantity;
+        }
+
+        await usercart.save();
+        res.json({message:"Quantity Updated Successfully",newQuantity}) 
+    } catch (error) {
+        console.error("Error updating quantity:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+},
+
+
+// -------------------------------remove from cart----------------------------------------------------------------
+
+
+
+removeItemFromCart: async (req, res) => {
+
+const userId=req.session.user.user;
+
+const user=await User.findById(userId);
+
+const productId=req.params._id;
+
+const updateCart=await Cart.findOneAndUpdate({UserId:user},
+    {$pull:{Items:{ProductId:productId}}},
+    {new:true}
+    );
+    console.log(" cart after deletion :",updateCart);
     
+    res.redirect("/cartpage")
+
+},
 
 
+// --------------------------------------------User Profile------------------------------------------
+
+profile: async (req, res) => {
+    const userId = req.session.user.user;
+    const user = await User.findById(userId);
+    // const orderCount = await Order.countDocuments({ UserId: userId });
+    // const cartCount = await Cart.countDocuments({ UserId: userId });
+    // const addressCount = await User.countDocuments();
+    console.log(req.session.user);
+    res.render("user/userprofile", {
+      user,
+    //   orderCount,
+    //   cartCount,
+    //   addressCount,
+    });
+  },
+
+// ------------------------------------------get address page--------------------------------------------
 
 
+  getEditAddress: async (req, res) => {
+    const userId = req.session.user.user;
+    const user = await User.findById(userId);
+    console.log(user.Address);
+    res.render("user/editAddress", { user });
+  },
+
+//   -----------------------------------------------add new address------------------------------------------
 
 
+  postAddressForm: async (req, res) => {
+    const userId = req.session.user.user;
+    const address = await User.findByIdAndUpdate(
+      userId,
+      { $push: { Address: req.body } },
+      { new: true }
+    );
+    console.log("Adress which got added is this ",address);
+    req.flash("success", "Address Added successfully");
+    res.redirect("/editAddress");
+    
+  },
 
+// ------------------------------------------------edit address-------------------------------------------------
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+postEditAddress: async(req,res)=>{
  
+    const addressId=req.params._id;
+
+    const userId=req.session.user.user;
+
+    console.log("user id is ",userId);
+
+    const user=await User.findById(userId)
+
+    try {
+        if (user) {
+
+            const {Name,AddressLane,City,State,Pincode,Mobile}=req.body
+
+            const addressIndex=user.Address.findIndex((a)=>a._id.toString()===addressId);
+
+            if(addressIndex!==-1){
+
+                user.Address[addressIndex].Name=Name;
+                user.Address[addressIndex].AddressLane = AddressLane;
+                user.Address[addressIndex].City = City;
+                user.Address[addressIndex].State = State;
+                user.Address[addressIndex].Pincode = Pincode;
+                user.Address[addressIndex].Mobile = Mobile;
+
+                await user.save();
+            
+
+                console.log("Address updated successfully");
+                req.flash("success", "Address updated successfully");
+                res.redirect("/editAddress");
+
+            }else{
+                console.log("Address Not Found")
+                req.flash("error","Address Not Found")
+                res.redirect("/editAddress");
+            }
+            
+        } else {
+            req.flash("error","User Not Found")
+            res.redirect("/editAddress");
+        }
+        
+    } catch (error) {
+       req.flash("error","Error In Updating Address")
+       res.redirect("/editAddress");
+    }
+
+},
+
+// -----------------------------------------delete the address--------------------------------------------------------
+
+
+deleteAddress: async (req, res) => {
+    console.log('test');
+    const userId = req.session.user.user;
+    const addressId = req.params._id; // Assuming you receive the address ID to delete from the request parameters
+  
+    console.log("address id is to delete",addressId)
+    try {
+      const user = await User.findById(userId);
+  
+      if (!user) {
+        console.log("User not found");
+        req.flash("error", "User not found");
+        return res.redirect("/editAddress");
+      }
+  
+      const addressIndex = user.Address.findIndex(
+        (a) => a._id.toString() === addressId
+      );
+  
+      if (addressIndex === -1) {
+        console.log("Address not found");
+        req.flash("error", "Address not found");
+        return res.redirect("/editAddress");
+      }
+  
+      user.Address.splice(addressIndex, 1); // Removing the address at the found index
+  
+      await user.save();
+  
+      console.log("Address deleted successfully");
+      req.flash("success", "Address deleted successfully");
+      return res.redirect("/editAddress");
+    } catch (error) {
+      console.error("Error deleting address:", error.message);
+      req.flash("error", "Error deleting address");
+      return res.status(500).send("Internal Server Error");
+    }
+  },
+  
+
+
+
+
+
+
+
+
+
+
+
+// -----------------------------------------------------user logout-------------------------------------------------
+
+
+
     getUserLogout: (req, res) => {
         req.session.user = false;
         res.clearCookie("userJwt");

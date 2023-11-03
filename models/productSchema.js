@@ -1,7 +1,8 @@
+
 const mongoose = require('mongoose');
 const {Schema,ObjectId} = mongoose 
 const ProductsSchema = new mongoose.Schema({
-  
+
   ProductName: {
     type: String,
     required: true,
@@ -9,6 +10,12 @@ const ProductsSchema = new mongoose.Schema({
   Price: {
     type: Number,
     required: true,
+    validate: {
+      validator: function (value) {
+        return value > 0; // Ensuring Price is a positive number
+      },
+      message: 'Price must be a positive number.'
+    }
   },
   Description: {
     type: String,
@@ -20,7 +27,7 @@ const ProductsSchema = new mongoose.Schema({
     ref: 'brand'
   },
   Tags: {
-      type: Array,
+    type: Array,
   },
   images: {
     type: Array,
@@ -28,7 +35,12 @@ const ProductsSchema = new mongoose.Schema({
   },
   AvailableQuantity: {
     type: Number,
-    required: true,
+    validate: {
+      validator: function(value) {
+        return value >= 0; // Validates that Quantity is greater than 0
+      },
+      message: "Quantity Can't be less than 0"
+    }
   },
   Category: {
     type: Schema.Types.ObjectId,
@@ -37,6 +49,12 @@ const ProductsSchema = new mongoose.Schema({
   },
   DiscountAmount: {
     type: Number,
+    validate: {
+      validator: function (value) {
+        return value >= 0 && value <= this.Price; // Ensuring DiscountAmount is positive and less than or equal to Price
+      },
+      message: 'Discount amount must be a positive number and less than the Price.'
+    }
   },
   Status: {
     type: String,
@@ -58,9 +76,9 @@ const ProductsSchema = new mongoose.Schema({
   Specification1: {
     type: String
   },
-  deletedAt: { 
+  deletedAt: {
     type: Date
-  }, 
+  },
 });
 
 const Products = mongoose.model("Products", ProductsSchema);

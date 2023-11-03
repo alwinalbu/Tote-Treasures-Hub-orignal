@@ -1,11 +1,11 @@
 const { body, validationResult } = require('express-validator');
 
 const userSignupValidation = [
-  body('Username')
+  body('username')
     .notEmpty().withMessage('Username is required')
     .isLength({ min: 4 }).withMessage('Username must be at least 4 characters'),
 
-  body('Password')
+  body('password')
     .notEmpty().withMessage('Password is required')
     .isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
     .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/)
@@ -14,17 +14,15 @@ const userSignupValidation = [
   body('confirmPassword')
     .notEmpty().withMessage('Confirm Password is required')
     .custom((value, { req }) => {
-      if (value !== req.body.Password) {
+      if (value !== req.body.password) {
         throw new Error('Passwords do not match');
       }
       return true;
     }),
 
-  body('Email')
+  body('email')
     .notEmpty().withMessage('Email is required')
-    .isEmail().withMessage('Invalid email address')
-    .matches(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/)
-    .withMessage('Invalid email format')
+    .isEmail().withMessage('Invalid email address'),
 ];
 
 const validate = (req, res, next) => {
@@ -37,29 +35,7 @@ const validate = (req, res, next) => {
   next();
 };
 
-
-const passwordValidation = [
-  body('Password')
-    .notEmpty().withMessage('Password is required')
-    .isLength({ min: 8 }).withMessage('Password must be at least 8 characters long')
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/)
-    .withMessage('Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'),
-];
-
-const confirmPasswordValidation = [
-  body('confirmPassword')
-    .notEmpty().withMessage('Confirm Password is required')
-    .custom((value, { req }) => {
-      if (value !== req.body.Password) {
-        throw new Error('Passwords do not match');
-      }
-      return true;
-    }),
-];
-
 module.exports = {
   userSignupValidation,
   validate,
-  passwordValidation,
-  confirmPasswordValidation,
 };

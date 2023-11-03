@@ -5,6 +5,7 @@ const { Schema, ObjectId  } = mongoose;
 const UserSchema = new Schema({
     Username: {
         type: String,
+        uppercase: true,
         required: true
     },
     Email: {

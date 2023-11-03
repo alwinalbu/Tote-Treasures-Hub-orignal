@@ -37,3 +37,18 @@
     color: rgba(230, 174, 49); /* Replace with your desired text color */
     font-family: 'Italianno', cursive;
 }
+
+
+.style{
+    font-family: 'Italianno', cursive; 
+}
+
+
+/* ------------------------------------cart----------------------------------- */
+
+@media (min-width: 1025px) {
+    .h-custom {
+    height: 100vh !important;
+    }
+    }
+

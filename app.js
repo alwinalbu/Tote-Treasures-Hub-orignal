@@ -40,6 +40,9 @@ app.set('view engine', 'ejs');
 
 app.use('/', userRouter);
 app.use('/admin', adminRouter);
+app.use("*", (req,res) => {
+  res.render('errorpage')
+})
 
 // Call the admin function to create the admin user during initialization
 // adminController.admin()

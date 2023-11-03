@@ -14,7 +14,7 @@ module.exports = {
 
 
       getCategory: async (req,res)=>{
-        const categories = await Category.find();
+        const categories = await Category.find({}).sort({ Name: 1 });
         res.render("admin/Categorypage", { messages: req.flash(),categories });
       },
 
@@ -57,4 +57,25 @@ module.exports = {
         res.render("admin/editcategory", { category })
       },
 
-    }
+      postEditCategory: async(req,res)=>{
+        const id = req.params._id
+      try {
+          if(req.file){
+            req.body.image = req.file.filename
+          }
+          let category = await Category.updateOne({_id : id},{$set : req.body})
+          req.flash("success", "Category Updated");
+          res.redirect('/admin/Categorypage') 
+      } catch (error) {
+          if (error.code === 11000) {
+              req.flash("error", "Category already exist");
+              res.redirect(`/admin/editCategory/${id}`);
+          } else {
+            req.flash("error", "Error Adding the Category");
+            res.redirect(`/admin/editCategory/${id}`);
+
+          }
+      }
+  
+    },
+}

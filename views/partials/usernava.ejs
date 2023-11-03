@@ -1,0 +1,68 @@
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: black;">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+        <button class="btn btn-outline-light" type="button" data-bs-toggle="offcanvas"
+        data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+        <a class="navbar-brand" href="">
+            <img src="/images/logo.png" style="max-height: 70px" alt="auto">
+            <h3 class="text-white fw-bold m-0 d-inline align-middle">ToteTreasures Hub</h3>
+        </a>
+
+        <!-- Move the search form outside of the collapse button -->
+        <form class="d-flex" role="search">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto"> <!-- Add ms-auto class -->
+                <li class="nav-item">
+                    <a class="nav-link" href="/homepage">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/shop">Shop</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/About Us">About Us <i class="fa-solid fa-heart text-danger"></i></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/cart">Cart <i class="fa-solid fa-cart-shopping text-primary"></i></a>
+                </li>
+                <li class="nav-item ml-auto"> <!-- Use ml-auto to push items to the right -->
+                    <% if (user) { %>
+                        <div class="dropdown">
+                            <a href="#" class="dropdown-toggle nav-link" id="usernameLink" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                <%= user.Username %> <i class="fa-solid fa-user"></i>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="usernameLink">
+                                <li><a class="dropdown-item" href="/profile">Profile</a></li>
+                                <li>
+                                    <hr class="dropdown-divider" />
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="/logout" id="logoutLink">Logout</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <% } else { %>
+                            <div class="d-flex align-items-center"> <!-- Add a div wrapper -->
+                                <a class="nav-link" href="/signup">
+                                    <i class="fa-solid fa-user-plus"></i> Sign Up
+                                </a>
+                                <span class="nav-link">|</span> <!-- Use a delimiter like "|" -->
+                                <a class="nav-link" href="/login">
+                                    <i class="fa-solid fa-sign-in-alt"></i> Login
+                                </a>
+                            </div>
+                            <% } %>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

@@ -14,7 +14,8 @@ module.exports = {
             })
         }else{
             req.session.user = false
-            res.render("user/signup")
+            const error = req.flash('Please Login or Signup');
+            res.render("user/signup", { err: error, user: '' });
         }
     },
     

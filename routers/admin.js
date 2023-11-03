@@ -59,7 +59,7 @@ router.route('/addcategory')
 
 router.route("/editCategory/:_id")
 .get(adminAuth.adminTokenAuth,categoryController.getEditCategory)
-// .post(categoryController.postEditCategory)
+.post(upload.single('image'),categoryController.postEditCategory)
 
 
 

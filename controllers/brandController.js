@@ -10,7 +10,7 @@ module.exports = {
 
       
       getbrandpage:async (req,res)=>{
-        const brands = await Brand.find();
+        const brands = await Brand.find({}).sort({ Name: 1 });
         res.render("admin/brandpage", { brands });
       },
       
@@ -19,6 +19,7 @@ module.exports = {
         try {
           const brandname=req.body.Name;
           console.log(brandname)
+          const brandtest=!/^\s+$/
           const brand=await Brand.findOne({Name:brandname})
           if(brand){
             console.log("Brand already Exits")
