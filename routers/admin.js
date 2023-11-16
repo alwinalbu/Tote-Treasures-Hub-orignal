@@ -4,6 +4,7 @@ const adminController=require('../controllers/adminController')
 const brandController=require("../controllers/brandController")
 const categoryController=require("../controllers/categoryController")
 const productController=require("../controllers/productController")
+const orderController=require("../controllers/orderController")
 const upload = require('../middlewares/upload')
 const adminAuth=require('../middlewares/adminAuth')
 const Categories = require('../models/categorySchema')
@@ -17,8 +18,22 @@ router.route('/Login')
     .get(adminAuth.adminExist,adminController.getLogin)
     .post(adminController.postLogin)
 
+// ---------------------------------------------------------------------------------------------------------------
+
 router.route("/dashboard")
     .get(adminAuth.adminTokenAuth,adminController.getDashboard)
+
+
+router.route('/daily')
+.get(adminAuth.adminTokenAuth,adminController.getproductsdaily)
+
+
+
+
+
+
+
+
 
 // --------------------------Userlist----------------------------------
 
@@ -85,6 +100,18 @@ router.route('/editproduct/:_id')
 .get(adminAuth.adminTokenAuth,productController.getEditProduct)
 .post(upload.fields([{ name: 'image1', maxCount: 1 }, { name: 'image2', maxCount: 1 }, { name: 'image3', maxCount: 1 }]),productController.postEditProduct)
 
+
+// -----------------------------------------------Order----------------------------------------------------------------
+
+router.route("/order")
+.get(adminAuth.adminTokenAuth,orderController.getOrders)
+
+router.route('/order/details/:_id')
+.get(adminAuth.adminTokenAuth,orderController.getOrderDetails)
+
+
+router.route('/order/updatestatus/:orderId')
+.put(adminAuth.adminTokenAuth,orderController.changeStatus)
 
 
 

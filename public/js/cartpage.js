@@ -1,16 +1,116 @@
+
 document.addEventListener("DOMContentLoaded", () => {
 
   const increaseButtons = document.querySelectorAll(".increase-quantity");
   const decreaseButtons = document.querySelectorAll(".decrease-quantity");
   const removeButtons = document.querySelectorAll(".remove-button");
+  const makePurchase = document.querySelector('#makePurchase')
 
-  // ------------------------increase buttom------------------------
+  // --------------------------------stock Checking before checkout-----------------------------------
+
+  makePurchase.addEventListener('click',(event)=>{
+    event.preventDefault();
+    checkStock();
+  })
+
+  async function checkStock(){
+    try {
+      const response = await fetch('/checkStock',{
+        method:'GET',
+        headers:{
+          'content-type':'application/json'
+          },
+      });
+
+      console.log("inside the chcekstock front end ")
+      if (response.ok) {
+
+        let data = await response.json()
+
+        console.log("response data is ",data)
+
+        if(data.success){
+
+          console.log("data is succeddfully here ");
+
+          const cartSubmitForm = $('#cartSubmit'); 
+
+          $.ajax({
+            url: '/cartpage',
+            type: 'POST',
+            data: $('#cartSubmit').serialize(),
+            success: function (response) {
+              window.location.href = ('/checkout')
+              console.log('AJAX request was successful.');
+              console.log(response);
+            },
+            error: function (xhr, status, error) {
+              console.error('AJAX request failed with status:', status);
+            }
+          });
+        }else{
+          Swal.fire({
+            icon: 'error',
+            title: 'Insufficient Stock',
+            text: data.error,
+          });
+          data.itemsWithInsufficientStock.forEach(item => {
+
+          console.log("insufficientstock inside");
+
+          const productId = item.productId; 
+
+          console.log(productId);
+
+          const outOfStockMessage = document.getElementById(`outOfStockMessage_${productId}`);
+
+          console.log("out of stock things ",outOfStockMessage);
+
+          if (outOfStockMessage) {
+            outOfStockMessage.style.display = "block";
+            outOfStockMessage.textContent = `only ${item.availableQuantity} items in stock`;
+          }
+        });
+        }
+      }
+    } catch (error) {
+      console.error("Error checking stock :", error);
+    }
+  }
+  
+  
+
+  // ------------------------increase buttom----------------------------------------------------------
+
   increaseButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const productId = button.getAttribute("data-product-id");
+      const quantityInput = document.getElementById(`count_${productId}`);
+      const quantity = parseInt(quantityInput.value, 10); // Corrected this line
+      const availableQuantity = parseInt(quantityInput.getAttribute("data-available-quantity"), 10);
+  
+      console.log("product id is", productId)
+  
+      if (quantity >= availableQuantity) {
+        const outOfStockMessage = document.querySelector(`#outOfStockMessage_${productId}`);
+        if (outOfStockMessage) {
+          outOfStockMessage.style.display = 'block';
+        }
+        return;
+      }
+  
+      updateQuantity(productId, 1);
+    });
+  });
+  
+  // --------------------------------------------decrese button---------------------------------------------------
+
+  decreaseButtons.forEach((button) => {
 
     button.addEventListener("click", () => {
       const productId = button.getAttribute("data-product-id");
       const quantityInput = document.getElementById(`count_${productId}`);
-      const quantity = parseInt(quantityInput.ariaValueMax, 10);
+      const quantity = parseInt(quantityInput.value, 10);
       const availableQuantity = parseInt(quantityInput.getAttribute("data-available-quantity"), 10);
 
       console.log("product id is", productId)
@@ -20,32 +120,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const outOfStockMessage = document.querySelector(`#outOfStockMessage_${productId}`);
         if (outOfStockMessage) {
           outOfStockMessage.style.display = 'block';
-        }
-        return;
-      }
-
-      updateQuantity(productId, 1);
-
-    });
-
-  });
-  // --------------------------------------------decrese button---------------------------------------------------
-
-  decreaseButtons.forEach((button) => {
-
-    button.addEventListener("click", () => {
-      const productId = button.getAttribute("data-product-id");
-      const quantityInput = document.getElementById(`count_${productId}`);
-      const quantity = parseInt(quantityInput.ariaValueMax, 10);
-      const availableQuantity = parseInt(quantityInput.getAttribute("data-available-quantity"), 10);
-
-      console.log("product id is", productId)
-
-      if (quantity >= availableQuantity) {
-
-        const outOfStockMessage = document.querySelector(`#outOfStockMessage_${productId}`);
-        if (outOfStockMessage) {
-          outOfStockMessage.style.display = 'none';
         }
         return;
       }
@@ -102,6 +176,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const productAmount = parseFloat(row.querySelector(`#productAmount_${productId}`).textContent);
 
       totalAmount += productAmount;
+      
+      
 
     });
 

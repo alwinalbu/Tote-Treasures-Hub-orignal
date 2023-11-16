@@ -21,8 +21,8 @@
             </a>
 
             <!-- Move the search form outside of the collapse button -->
-            <form class="d-flex" role="search">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <form class="d-flex" role="search" action="/search" method="GET">
+                <input class="form-control me-2" type="search" name="searchTags" placeholder="Search" aria-label="Search">
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
 
@@ -39,7 +39,7 @@
                         <a class="nav-link" href="/shop">Shop</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/About Us">About Us <i class="fa-solid fa-heart text-danger"></i></a>
+                        <a class="nav-link" href="/wishlist">WishList <i class="fa-solid fa-heart text-danger"></i></a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/cart">Cart <i class="fa-solid fa-cart-shopping text-primary"></i></a>
@@ -149,7 +149,7 @@
                                     style=" height: 40vh;" alt="">
                                 <div class="card-body d-flex flex-column justify-content-between"
                                     style=" height: 30vh;">
-                                    <h5 class="card-title text-center">
+                                    <h5 class="card-title text-center" style="height: 20px; overflow: hidden;">
                                         <%= product.ProductName %>
                                     </h5>
                                     <div class="d-flex flex-column justify-content-center">
@@ -160,8 +160,7 @@
                                             <% } else { %>
                                                 <p class="card-text text-center text-danger"><del> ₹<%= product.Price %>
                                                             </del></p>
-                                                <p class="card-text text-center text-success">DiscountAmount ₹<%=
-                                                        product.DiscountAmount %>
+                                                <p class="card-text text-center text-success">DiscountAmount ₹<%= product.DiscountAmount %>
                                                 </p>
                                                 <a href="/productViewDetailspage/<%= product._id %>"
                                                     class="btn btn-primary text-center">View Details</a>

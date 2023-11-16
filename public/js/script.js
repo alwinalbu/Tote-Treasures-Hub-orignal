@@ -44,14 +44,16 @@ $(document).ready(function () {
       url: "/emailVerification", // Update with the  URL
       data: { otp:otp }, // Send OTP as data
       success: function (response) {
+
         console.log('Response from server:', response);
+
         if (response.success) {
           clearInterval(countdown);
           timerDisplay.text("OTP Validated");
 
           // redirected to homepage
 
-          window.location.href='/homepage'
+          window.location.href = '/homepage?userId=' + response.user.userId;
         } else {
           // Handle unsuccessful OTP validation
           alert("Invalid OTP. Please try again.");

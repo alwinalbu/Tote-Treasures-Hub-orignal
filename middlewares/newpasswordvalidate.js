@@ -22,6 +22,7 @@ const confirmPasswordValidation = [
 const passvalidate = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    console.log(errors.array());
     const errorMessages = errors.array().map(error => error.msg);
     req.flash('error', errorMessages);
     return res.redirect('/createNewPassword');

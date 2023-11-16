@@ -1,0 +1,67 @@
+/* Reset some default styles for better consistency */
+body,
+html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: rgb(0, 0, 0);
+}
+
+/* Navbar styles - retained for consistency */
+.navbar {
+    background-color: black;
+    padding: 0;
+    border-bottom: 1px solid rgba(230, 174, 49);
+}
+
+.navbar-brand h3,
+.nav-link,
+.dropdown-menu a {
+    font-family: Italianno;
+}
+
+.nav-link {
+    color: rgb(247, 10, 10);
+    font-size: 24px;
+    font-weight: 700;
+}
+
+/* Change the color of the navigation links on hover */
+.navbar-nav .nav-item a:hover {
+    color: rgba(230, 174, 49);
+}
+
+/* Custom CSS for the dropdown menu */
+.dropdown-menu {
+    background-color: white;
+}
+
+.dropdown-menu a {
+    color: rgb(0, 0, 0);
+}
+
+/* Styling for the address table */
+.address-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.address-table th {
+    background-color: #f2f2f2;
+    padding: 10px;
+    text-align: left;
+}
+
+.address-table td {
+    padding: 10px;
+}
+
+.address-row:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.address-row:hover {
+    background-color: #e0e0e0;
+}
+
+

@@ -14,9 +14,26 @@ module.exports = {
 
 
       getCategory: async (req,res)=>{
-        const categories = await Category.find({}).sort({ Name: 1 });
-        res.render("admin/Categorypage", { messages: req.flash(),categories });
-      },
+        try {
+          const page = parseInt(req.query.page) || 1; // Accessing page from query parameters
+          const perPage = 3;
+          const skip = (page - 1) * perPage;
+
+        const categories = await Category.find({}).skip(skip).limit(perPage).sort({ Name: 1 });
+        const totalCount = await Category.countDocuments();
+
+        res.render("admin/Categorypage", { 
+          messages: req.flash(),
+          categories,
+          currentPage: page,
+          perPage,
+          totalCount,
+          totalPages: Math.ceil(totalCount / perPage),
+        });
+      } catch (error) {
+        res.send(error);
+      }
+    },
 
 
       postAddCategory: async (req, res) => {

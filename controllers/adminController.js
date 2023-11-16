@@ -2,6 +2,9 @@ const User = require("../models/userSchema");
 const flash = require("express-flash");
 const Admin = require("../models/adminSchema")
 const Brand=require("../models/brandSchema")
+const Order=require('../models/orderSchema')
+const Products=require('../models/productSchema')
+const Category = require('../models/categorySchema')
 
 
 const bcrypt = require("bcrypt");
@@ -75,18 +78,73 @@ module.exports = {
     },
 
     getDashboard: async (req, res) => {
-        const adminName = req.session.admin.Name; // Access the admin's Name from the session
-        res.render("admin/dashboard", { adminName }); // Pass the Name to your template
-    },
+      const adminName = req.session.admin.Name;
+  
+      try {
+          // Fetch latest orders with populated UserId and Items
+          const latestOrders = await Order.find()
+              .sort({ OrderDate: -1 })
+              .limit(5)
+              .populate({
+                  path: 'UserId',
+                  select: 'Username Email',
+              })
+              .populate({
+                  path: 'Items.ProductId',
+                  model: 'Products',
+                  select: 'ProductName',
+              });
+  
+          // Fetch frequent users (those with the most orders)
+          const frequentUsers = await User.aggregate([
+              {
+                  $lookup: {
+                      from: 'orders',
+                      localField: '_id',
+                      foreignField: 'UserId',
+                      as: 'userOrders',
+                  },
+              },
+              {
+                  $addFields: {
+                      orderCount: { $size: '$userOrders' },
+                  },
+              },
+              {
+                  $sort: { orderCount: -1 },
+              },
+              {
+                  $limit: 5,
+              },
+          ]);
+  
+          res.render('admin/dashboard', { adminName, latestOrders, frequentUsers });
+      } catch (error) {
+          console.error('Error fetching data:', error);
+          res.status(500).send('Internal Server Error');
+      }
+  },
+  
+  
 
     getUser: async (req, res) => {
         try {
-          const adminName = req.session.admin.Name;
-          const users = await User.find({}).sort({ Username: 1 });
-    console.log("users are :",users)
+           const page = parseInt(req.query.page) || 1; // Accessing page from query parameters
+           const perPage = 5;
+           const skip = (page - 1) * perPage;
+           const adminName = req.session.admin.Name;
+           const users = await User.find({}).skip(skip).limit(perPage).sort({ Username: 1 });
+
+          const totalCount = await User.countDocuments();
+
+          // console.log("users are :",users)
           res.render("admin/manageUsers", {
             users,
             adminName,
+            currentPage: page,
+            perPage,
+            totalCount,
+            totalPages: Math.ceil(totalCount / perPage),
           });
         } catch (error) {
           res.send(error);
@@ -135,6 +193,235 @@ module.exports = {
           res.redirect("/admin/userslist");
         }
       },
+
+// ----------------------------------------------------------Dashboard things--------------------------------------
+
+getproductsdaily: async (req, res) => {
+  try {
+      console.log("reached inside of daily products");
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      console.log("date today is :",today)
+
+      const dailyProducts = await Order.aggregate([
+          {
+              $match: {
+                  OrderDate: { $gte: today },
+              },
+          },
+          {
+              $unwind: '$Items',
+          },
+          {
+              $lookup: {
+                  from: 'products', 
+                  localField: 'Items.ProductId',
+                  foreignField: '_id',
+                  as: 'productDetails',
+              },
+          },
+          {
+              $unwind: '$productDetails',
+          },
+          {
+              $lookup: {
+                  from: 'Categories', 
+                  localField: 'productDetails.Category',
+                  foreignField: '_id',
+                  as: 'categoryDetails',
+              },
+          },
+          {
+              $project: {
+                  _id: '$productDetails._id',
+                  ProductName: '$productDetails.ProductName',
+                  Price: '$productDetails.DiscountAmount',
+                  Status: '$productDetails.Status',
+                  Category: {
+                      _id: '$categoryDetails._id',
+                      Name: '$categoryDetails.Name',
+                      image: '$categoryDetails.image',
+                  },
+                  images: '$productDetails.images',
+              },
+          },
+      ]);
+
+      console.log("After aggregation pipeline:", dailyProducts);
+
+      res.json({ products: dailyProducts });
+
+      console.log("daily answer is: ",dailyProducts)
+
+  } catch (error) {
+      console.error('Error fetching daily product data:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
+},
+
+// getproductsdaily: async (req, res) => {
+//     try {
+//         console.log("Reached inside of daily products");
+  
+//         let today = new Date();
+//         today.setUTCHours(0, 0, 0, 0);
+//         console.log("Date today is:", today);
+  
+//         dailyProducts = await Order.aggregate([
+//             {
+//                 $match: {
+//                     OrderDate: { $gte: today },
+//                 },
+//             },
+//         ]);
+  
+//         console.log("After $match stage:", dailyProducts);
+  
+//         dailyProducts = await Order.aggregate([
+//             {
+//                 $match: {
+//                     OrderDate: { $gte: today },
+//                 },
+//             },
+//             {
+//                 $unwind: '$Items',
+//             },
+//         ]);
+  
+//         console.log("After $unwind '$Items' stage:", dailyProducts);
+  
+//         dailyProducts = await Order.aggregate([
+//             {
+//                 $match: {
+//                     OrderDate: { $gte: today },
+//                 },
+//             },
+//             {
+//                 $unwind: '$Items',
+//             },
+//             {
+//                 $lookup: {
+//                     from: 'products', 
+//                     localField: 'Items.ProductId',
+//                     foreignField: '_id',
+//                     as: 'productDetails',
+//                 },
+//             },
+//         ]);
+  
+//         console.log("After $lookup 'products' stage:", dailyProducts);
+  
+//         dailyProducts = await Order.aggregate([
+//             {
+//                 $match: {
+//                     OrderDate: { $gte: today },
+//                 },
+//             },
+//             {
+//                 $unwind: '$Items',
+//             },
+//             {
+//                 $lookup: {
+//                     from: 'products', 
+//                     localField: 'Items.ProductId',
+//                     foreignField: '_id',
+//                     as: 'productDetails',
+//                 },
+//             },
+//             {
+//                 $unwind: '$productDetails',
+//             },
+//         ]);
+  
+//         console.log("After $unwind '$productDetails' stage:", dailyProducts);
+  
+//         dailyProducts = await Order.aggregate([
+//             {
+//                 $match: {
+//                     OrderDate: { $gte: today },
+//                 },
+//             },
+//             {
+//                 $unwind: '$Items',
+//             },
+//             {
+//                 $lookup: {
+//                     from: 'products', 
+//                     localField: 'Items.ProductId',
+//                     foreignField: '_id',
+//                     as: 'productDetails',
+//                 },
+//             },
+//             {
+//                 $unwind: '$productDetails',
+//             },
+//             {
+//                 $lookup: {
+//                     from: 'Categories', 
+//                     localField: 'productDetails.Category',
+//                     foreignField: '_id',
+//                     as: 'categoryDetails',
+//                 },
+//             },
+//         ]);
+  
+//         console.log("After $lookup 'Categories' stage:", dailyProducts);
+  
+//         dailyProducts = await Order.aggregate([
+//             {
+//                 $match: {
+//                     OrderDate: { $gte: today },
+//                 },
+//             },
+//             {
+//                 $unwind: '$Items',
+//             },
+//             {
+//                 $lookup: {
+//                     from: 'products', 
+//                     localField: 'Items.ProductId',
+//                     foreignField: '_id',
+//                     as: 'productDetails',
+//                 },
+//             },
+//             {
+//                 $unwind: '$productDetails',
+//             },
+//             {
+//                 $lookup: {
+//                     from: 'Categories', 
+//                     localField: 'productDetails.Category',
+//                     foreignField: '_id',
+//                     as: 'categoryDetails',
+//                 },
+//             },
+//             {
+//                 $project: {
+//                     _id: '$productDetails._id',
+//                     ProductName: '$productDetails.ProductName',
+//                     Price: '$productDetails.DiscountAmount',
+//                     Status: '$productDetails.Status',
+//                     Category: {
+//                         _id: '$categoryDetails._id',
+//                         Name: '$categoryDetails.Name',
+//                         image: '$categoryDetails.image',
+//                     },
+//                     images: '$productDetails.images',
+//                 },
+//             },
+//         ]);
+  
+//         console.log("After $project stage:", dailyProducts);
+  
+//         res.json({ products: dailyProducts });
+  
+//     } catch (error) {
+//         console.error('Error fetching daily product data:', error);
+//         res.status(500).json({ error: 'Internal Server Error' });
+//     }
+//   },
+  
 
 
     getAdminLogout: (req, res) => {

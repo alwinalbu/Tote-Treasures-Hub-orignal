@@ -1,19 +1,36 @@
 const Brand = require("../models/brandSchema");
 const Admin=require("../models/adminSchema")
+const User=require('../models/userSchema')
 
 
 module.exports = {
-    getAddBrand: (req, res) => {
+    getAddBrand:(req, res) => {
         const adminName = req.session.admin.Name;
         res.render("admin/addBrand",{ adminName });
       },
 
       
       getbrandpage:async (req,res)=>{
-        const brands = await Brand.find({}).sort({ Name: 1 });
-        res.render("admin/brandpage", { brands });
-      },
-      
+        try {
+        const page = parseInt(req.query.page) || 1; // Accessing page from query parameters
+        const perPage = 4;
+        const skip = (page - 1) * perPage;
+
+        const brands = await Brand.find({}).skip(skip).limit(perPage).sort({ Name: 1 });
+
+        const totalCount = await Brand.countDocuments();
+
+        res.render("admin/brandpage", { 
+          brands,
+          currentPage: page,
+          perPage,
+          totalCount,
+          totalPages: Math.ceil(totalCount / perPage),
+        });
+      } catch (error) {
+        res.send(error);
+      }
+    },
 
       postAddBrand: async (req, res) => {
         try {

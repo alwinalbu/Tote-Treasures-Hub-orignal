@@ -58,7 +58,7 @@ module.exports = {
       
           // Redirect to the appropriate route after successfully adding the product
           req.flash("success", "Product is Added Successfully");
-         
+          res.redirect("/admin/addProduct");
         } catch (error) {
           req.flash('error', `${error}`);
           res.redirect("/admin/addProduct");
@@ -67,14 +67,25 @@ module.exports = {
 
       getProduct: async (req, res) => {
         try {
-          const products = await Product.find()
+          const page = parseInt(req.query.page) || 1; // Accessing page from query parameters
+           const perPage = 5;
+           const skip = (page - 1) * perPage;
+
+          const products = await Product.find().skip(skip).limit(perPage)
             .populate('BrandName', 'Name') // Populate the BrandName field with Name property
             .populate('Category', 'Name')   // Populate the Category field with name property
             .lean();
-      
-          console.log("Products:", products); // Add this line
+            
+          const totalCount = await Product.countDocuments();
+
+          // console.log("Products:", products); 
+
           res.render("admin/productpage", {
             products,
+            currentPage: page,
+            perPage,
+            totalCount,
+            totalPages: Math.ceil(totalCount / perPage),
           });
         } catch (error) {
           console.error(error);

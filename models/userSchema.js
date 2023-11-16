@@ -14,7 +14,7 @@ const UserSchema = new Schema({
     },
     Password: {
         type: String,
-        required: true
+        required: false
     },
     Status: {
         type: String,
@@ -39,6 +39,12 @@ const UserSchema = new Schema({
         Mobile: {
             type: Number
         }
+    }],
+    googleId: {
+        type: String
+    },
+    Wishlist:[{
+        productId:{type:Schema.Types.ObjectId,ref:'Products'}
     }]
 });
 

@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Order List Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href='https://fonts.googleapis.com/css?family=Italianno' rel='stylesheet'>
+    <link rel="stylesheet" type="text/css" href="/css/admin/productpage.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+
+</head>
+
+<body style="background-color: black;">
+    <nav class="navbar navbar-expand-lg main-nav">
+        <div class="container-fluid d-flex align-items-center">
+            <button class="btn btn-outline-light" type="button" data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <a class="navbar-brand d-flex justify-content-start" href="#">
+                <img src="/images/logo.png" alt="Bootstrap" style="height: 70px; width: auto;">
+            </a>
+            <h1 class="header m-0">ToteTreasures Hub </h1>
+            </h1>
+            <div class="collapse navbar-collapse d-flex justify-content-end">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="btn btn-danger " href="/admin/logout">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+
+    <!-- Offcanvas menu -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasMenuLabel">ADMINS OPTIONS</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body p-0">
+            <ul class="list-group custom-list">
+                <a href="/admin/dashboard" class="list-group-item custom-list-item">
+                    <i class="fas fa-house me-2"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/admin/product" class="list-group-item custom-list-item">
+                    <i class="fas fa-bag-shopping me-2"></i>
+                    <span>Products</span>
+                </a>
+                <a href="/admin/order" class="list-group-item custom-list-item">
+                    <i class="fas fa-cart-shopping me-2"></i>
+                    <span>Orders</span>
+                </a>
+                <a href="/admin/userslist" class="list-group-item custom-list-item">
+                    <i class="fas fa-users me-2"></i>
+                    <span>Customers</span>
+                </a>
+                <a href="/admin/coupons" class="list-group-item custom-list-item">
+                    <i class="fas fa-id-card me-2"></i>
+                    <span>Coupons</span>
+                </a>
+                <a href="/admin/banners" class="list-group-item custom-list-item">
+                    <i class="fas fa-flag me-2"></i>
+                    <span>Banners</span>
+                </a>
+                <a href="/admin/brandpage" class="list-group-item custom-list-item">
+                    <i class="fas fa-user-plus me-2"></i>
+                    <span>Brands</span>
+                </a>
+                <a href="/admin/Categorypage" class="list-group-item custom-list-item">
+                    <i class="fas fa-list me-2"></i>
+                    <span>Categories</span>
+                </a>
+                <a href="/admin/payments" class="list-group-item custom-list-item">
+                    <i class="fas fa-money-bill me-2"></i>
+                    <span>Payments</span>
+                </a>
+            </ul>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <a href="#" onclick="history.back();" class="btn btn-warning">
+                <i class="bi bi-arrow-left"></i> Back
+              </a>
+            <% if (order && order.Items.length > 0) { %>
+                <% order.Items.forEach((product, index) => { %>
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="card">
+                            <img src="/uploads/<%=product.ProductId.images[0]%>" alt="Product Image">
+                            <div class="card-body">
+                                <h5>Order ID: <%= order._id %></h5>
+                                <p>Placed On: <%= order.OrderDate %></p>
+                                <h6><%= product.ProductId.ProductName %></h6>
+                                <p>Quantity: <%= product.Quantity %></p>
+                                <p>Price: ₹ <%= product.ProductId.DiscountAmount %> /-</p>
+                                <p>Via: <%= order.PaymentMethod %></p>
+                                <p>Status: <%= order.Status %></p>
+                                <p>PaymentStatus:<%= order.PaymentStatus %></p>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } %>
+        </div>
+        
+    </div>
+    
+    
+        <!-- Bootstrap JavaScript (place at the end of the body) -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+        <style>
+            .card {
+                border-radius: 15px;
+                box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+                transition: 0.3s;
+                width: 300px;
+                margin: 15px;
+                text-align: center;
+            }
+        
+            .card img {
+                border-top-left-radius: 15px;
+                border-top-right-radius: 15px;
+                width: 100%;
+                height: 200px;
+                object-fit: cover;
+            }
+        
+            .card-body {
+                padding: 20px;
+            }
+        </style>
+    <script>
+        var myOffcanvas = new bootstrap.Offcanvas(document.getElementById('staticBackdrop'));
+    </script>
+</body>
+
+</html>

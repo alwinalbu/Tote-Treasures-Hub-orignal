@@ -41,10 +41,10 @@
                         <a class="nav-link" href="/shop">Shop</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/About Us">About Us <i class="fa-solid fa-heart text-danger"></i></a>
+                        <a class="nav-link" href="/wishlist">WishList <i class="fa-solid fa-heart text-danger"></i></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/cart">Cart <i class="fa-solid fa-cart-shopping text-primary"></i></a>
+                        <a class="nav-link" href="/cartpage">Cart <i class="fa-solid fa-cart-shopping text-primary"></i></a>
                     </li>
                     <li class="nav-item ml-auto"> <!-- Use ml-auto to push items to the right -->
                         <% if (user) { %>
@@ -79,182 +79,181 @@
             </div>
         </div>
     </nav>
-
     <% let totalPrice = 0; %>
-<!-- cart + summary -->
-
-<section class="bg-light my-5">
-  <form action="/cartpage" method="post">
-    <div class="container">
-      <div class="row">
-        <!-- cart -->
-        <div class="col-lg-9">
-          <div class="card border shadow-0">
-            <div class="m-4">
-              <h4 class="card-title mb-4">Your shopping cart</h4>
-              <%if(cart && cart.Items && cart.Items.length > 0) { %> <%
-              cart.Items.forEach(function (cartItem) { %>
-              <div class="row gy-3 mb-4">
-                <div class="col-lg-5">
-                  <div class="me-lg-5">
-                    <div class="d-flex">
-                      <img
-                        src="/uploads/<%=cartItem.ProductId.images[0]%>"
-                        class="border rounded me-3"
-                        style="width: 96px; height: 96px"
-                      />
+    <!-- cart + summary -->
+    
+    <section class="bg-light my-5">
+      <form id="cartSubmit">
+        <div class="container">
+          <div class="row">
+            <!-- cart -->
+            <div class="col-lg-9">
+              <div class="card border shadow-0">
+                <div class="m-4">
+                  <h4 class="card-title mb-4">Your shopping cart</h4>
+                  <%if(cart && cart.Items && cart.Items.length > 0) { %> <%
+                  cart.Items.forEach(function (cartItem) { %>
+                  <div class="row gy-3 mb-4">
+                    <div class="col-lg-5">
+                      <div class="me-lg-5">
+                        <div class="d-flex">
+                          <img
+                            src="/uploads/<%= cartItem.ProductId.images[0] %>"
+                            class="border rounded me-3"
+                            style="width: 96px; height: 96px"
+                          />
+                          <div class="">
+                            <a href="#" class="nav-link text-dark"
+                              ><%= cartItem.ProductId.ProductName %></a >
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-2 col-sm-6 col-6 d-flex flex-column">
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                          <button
+                            class="btn btn-dark decrease-quantity"
+                            data-product-id="<%=cartItem.ProductId._id%>"
+                            type="button"
+                          >
+                            -
+                          </button>
+                        </div>
+                        <input
+                        type="text"
+                        class="form-control text-center quantity-input"
+                        id="count_<%= cartItem.ProductId._id %>"
+                        value="<%= cartItem.Quantity %>"
+                        data-min-value="1"
+                        data-available-quantity="<%= cartItem.ProductId.AvailableQuantity %>"
+                        />
+                        <div class="input-group-append">
+                          <button
+                            class="btn btn-dark increase-quantity"
+                            data-product-id="<%=cartItem.ProductId._id%>"
+                            type="button"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
                       <div class="">
-                        <a href="#" class="nav-link"
-                          ><%= cartItem.ProductId.ProductName %></a
+                        ₹
+                        <text
+                          class="h6 product-amount"
+                          id="productAmount_<%=cartItem.ProductId._id%>"
+                          data-value="<%= cartItem.ProductId.DiscountAmount%>"
+                          ><%= cartItem.ProductId.DiscountAmount * cartItem.Quantity
+                          %></text>/-
+                        <br />
+                        <small class="text-muted text-nowrap">
+                          ₹<%= cartItem.ProductId.DiscountAmount %> / per item
+                        </small>
+                      </div>
+                    </div>
+                    <div
+                      class="col-lg col-sm-6 d-flex justify-content-sm-center justify-content-md-start justify-content-lg-center justify-content-xl-end mb-2"
+                    >
+                    <div class="float-md-end">
+                      <strong
+                      class="card-text text-center text-danger out-of-stock-message"
+                      id="outOfStockMessage_<%= cartItem.ProductId._id %>"
+                      style="display: none;"
+                    >
+                      only <%= cartItem.ProductId.AvailableQuantity %> items in stock
+                    </strong>
+                        <a
+                          href="#!"
+                          class="btn btn-light border px-2 icon-hover-primary"
+                          ><i class="fas fa-heart fa-lg px-1 text-secondary"></i></a>
+                        <a
+                          href="/removefromcart/<%=cartItem.ProductId._id%>"
+                          class="btn btn-light border text-danger icon-hover-danger remove-button"
                         >
+                          Remove</a>
                       </div>
                     </div>
                   </div>
+                  <% totalPrice += cartItem.ProductId.DiscountAmount *
+                  cartItem.Quantity;%> <% }); %> <% } else { %>
+                  <p>Your shopping cart is empty.</p>
+                  <a href="/shop" class="btn btn-info">Go To Shop</a>
+                  <% } %>
                 </div>
-                <div class="col-lg-2 col-sm-6 col-6 d-flex flex-column">
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <button
-                        class="btn btn-dark decrease-quantity"
-                        data-product-id="<%=cartItem.ProductId._id%>"
-                        type="button"
-                      >
-                        -
-                      </button>
+    
+                <div class="border-top pt-4 mx-4 mb-4">
+                  <p>
+                    <i class="fas fa-truck text-muted fa-lg"></i> Free Delivery
+                    within 1-2 weeks
+                  </p>
+                  <p class="text-muted"></p>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3">
+              <div class="card mb-3 border shadow-0">
+                <div class="card-body">
+                    <div class="form-group">
+                      <label class="form-label">Have coupon?</label>
+                      <div id="flashMessage" class="alert alert-danger" style="display: none;"></div>
+                      <div class="input-group">
+                        <input
+                          type="text"
+                          class="form-control border"
+                          id="coupon"
+                          name="couponCode"
+                          placeholder="Coupon code"
+                        />
+                        <button type="button" data-product-id="couponClaim" class="btn btn-light border applyCoupon">Apply</button>
+                      </div>
                     </div>
-                    <input
-                    type="text"
-                    class="form-control text-center quantity-input"
-                    id="count_<%= cartItem.ProductId._id %>"
-                    value="<%= cartItem.Quantity %>"
-                    data-min-value="1"
-                    data-available-quantity="<%= cartItem.ProductId.AvailableQuantity %>"
-                    />
-                    <div class="input-group-append">
-                      <button
-                        class="btn btn-dark increase-quantity"
-                        data-product-id="<%=cartItem.ProductId._id%>"
-                        type="button"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-                  <div class="">
-                    ₹
-                    <text
-                      class="h6 product-amount"
-                      id="productAmount_<%=cartItem.ProductId._id%>"
-                      data-value="<%= cartItem.ProductId.DiscountAmount%>"
-                      ><%= cartItem.ProductId.DiscountAmount * cartItem.Quantity
-                      %></text>/-
-                    <br />
-                    <small class="text-muted text-nowrap">
-                      ₹<%= cartItem.ProductId.DiscountAmount %> / per item
-                    </small>
-                  </div>
-                </div>
-                <div
-                  class="col-lg col-sm-6 d-flex justify-content-sm-center justify-content-md-start justify-content-lg-center justify-content-xl-end mb-2"
-                >
-                <div class="float-md-end">
-                  <strong
-                  class="card-text text-center text-danger out-of-stock-message"
-                  id="outOfStockMessage_<%= cartItem.ProductId._id %>"
-                  style="display: none;" 
-                >
-                  only <%= cartItem.ProductId.AvailableQuantity %> items in stock
-                </strong>
-                    <a
-                      href="#!"
-                      class="btn btn-light border px-2 icon-hover-primary"
-                      ><i class="fas fa-heart fa-lg px-1 text-secondary"></i
-                    ></a>
-                    <a
-                      href="/removefromcart/<%=cartItem.ProductId._id%>"
-                      class="btn btn-light border text-danger icon-hover-danger remove-button">
-                      Remove</a>
-                  </div>
                 </div>
               </div>
-              <% totalPrice += cartItem.ProductId.DiscountAmount *
-              cartItem.Quantity;%> <% }); %> <% } else { %>
-              <p>Your shopping cart is empty.</p>
-              <a href="/shop" class="btn btn-info">Go To Shop</a>
-              <% } %>
-            </div>
-
-            <div class="border-top pt-4 mx-4 mb-4">
-              <p>
-                <i class="fas fa-truck text-muted fa-lg"></i> Free Delivery
-                within 1-2 weeks
-              </p>
-              <p class="text-muted"></p>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-3">
-          <div class="card mb-3 border shadow-0">
-            <div class="card-body">
-                <div class="form-group">
-                  <label class="form-label">Have coupon?</label>
-                  <div id="flashMessage" class="alert alert-danger" style="display: none;"></div>
-                  <div class="input-group">
-                    <input
-                      type="text"
-                      class="form-control border"
-                      id="coupon"
-                      name="couponCode"
-                      placeholder="Coupon code"
-                    />
-                    <button type="button" data-product-id="couponClaim" class="btn btn-light border applyCoupon">Apply</button>
+              <div class="card shadow-0 border">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between">
+                    <p class="mb-2">Sub Total :</p>
+                    <div id="sub-total"></div>
+                  </div>
+                  <div class="d-flex justify-content-between">
+                    <p class="mb-2">Discount:</p>
+                    <div id="discountCell"></div>
+                  </div>
+                  <div class="d-flex justify-content-between">
+                    <p class="mb-2">TAX:</p>
+                    <p class="mb-2"></p>
+                  </div>
+                  <hr />
+                  <div class="d-flex justify-content-between">
+                    <p class="mb-2">Total price:</p>
+                        <input type="text" id="totalAmountCell" class="transparent-input" name="totalPrice" readonly>
+                    </p>
+                  </div>
+    
+                  <div class="mt-3">
+                    <button id="makePurchase" type="button" class="btn btn-success w-100 shadow-0 mb-2">
+    
+                        Make Purchase
+                    </button>
+                    <a href="/homepage" class="btn btn-light w-100 border mt-2">
+                      Back to shop
+                    </a>
                   </div>
                 </div>
-            </div>
-          </div>
-          <div class="card shadow-0 border">
-            <div class="card-body">
-              <div class="d-flex justify-content-between">
-                <p class="mb-2">Sub Total :</p>
-                <div id="sub-total"></div>
-              </div>
-              <div class="d-flex justify-content-between">
-                <p class="mb-2">Discount:</p>
-                <div id="discountCell"></div>
-              </div>
-              <div class="d-flex justify-content-between">
-                <p class="mb-2">TAX:</p>
-                <p class="mb-2">--</p>
-              </div>
-              <hr />
-              <div class="d-flex justify-content-between">
-                <p class="mb-2">Total price:</p>
-                    <input type="text" id="totalAmountCell" class="transparent-input" name="totalPrice" readonly>
-                </p>
-              </div>
-
-              <div class="mt-3">
-                <button type="submit" class="btn btn-success w-100 shadow-0 mb-2">
-
-                    Make Purchase
-                </button>
-                <a href="/homepage" class="btn btn-light w-100 border mt-2">
-                  Back to shop
-                </a>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  </form>
-</section>
+      </form>
+    </section>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="/js/cartpage.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous">
 </script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/js/cartpage.js"></script>
 
 </body>
 

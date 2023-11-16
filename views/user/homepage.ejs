@@ -22,10 +22,10 @@
         </a>
       </div>
       <!-- Move the search bar outside of the collapse button -->
-      <form class="d-flex" role="search">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+      <form class="d-flex" role="search" action="/search" method="GET">
+        <input class="form-control me-2" type="search" name="searchTags" placeholder="Search" aria-label="Search">
         <button class="btn btn-outline-success" type="submit">Search</button>
-      </form>
+    </form>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -41,7 +41,7 @@
         </ul>
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link" href="/About Us">About Us <i class="fa-solid fa-heart text-danger"></i></a>
+            <a class="nav-link" href="/wishlist">WishList <i class="fa-solid fa-heart text-danger"></i></a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/cartpage">Cart <i class="fa-solid fa-cart-shopping text-primary"></i></a>
@@ -144,7 +144,7 @@
               <div class="card">
                 <img src="/uploads/<%= product.images[0] %>" class="card-img-top " style=" height: 40vh;" alt="">
                 <div class="card-body d-flex flex-column justify-content-between" style=" height: 30vh;">
-                  <h5 class="card-title text-center">
+                  <h5 class="card-title text-center" style="height: 20px; overflow: hidden;">
                     <%= product.ProductName %>
                   </h5>
                   <div class="d-flex flex-column justify-content-center">
@@ -154,20 +154,47 @@
                       </div>
                       <% } else { %>
                         <p class="card-text text-center text-danger"><del> ₹<%= product.Price %></del></p>
-                        <p class="card-text text-center text-success">Offer Price ₹<%= product.DiscountAmount %></p>
-                        <a href="/productViewDetailspage/<%= product._id %>" class="btn btn-primary text-center">View Details</a>
+                        <p class="card-text text-center text-success">Offer Price ₹<%= product.DiscountAmount %>
+                        </p>
+                        <a href="/productViewDetailspage/<%= product._id %>" class="btn btn-primary text-center">View
+                          Details</a>
                         <% } %>
                   </div>
                 </div>
               </div>
             </div>
             <% }); %>
+            <% if (products.length> 0) { %>
+              <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-end">
+                  <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                    <a class="page-link" href="?page=<%= currentPage - 1 %>">Previous</a>
+                  </li>
+    
+                  <% for (let i=1; i <=totalPages; i++) { %>
+                    <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                      <a class="page-link" href="?page=<%= i %>">
+                        <%= i %>
+                      </a>
+                    </li>
+                    <% } %>
+    
+                      <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                        <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
+                      </li>
+                </ul>
+              </nav>
+              <% } else { %>
+                <p>No products found.</p>
+                <% } %>
         </div>
       </div>
 
 
-    </div>
   </section>
+
+
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
     crossorigin="anonymous"></script>

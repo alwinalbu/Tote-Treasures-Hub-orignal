@@ -8,6 +8,8 @@ const session = require('express-session');
 const db = require('./config/db');
 const flash = require('express-flash');
 const cookieParser = require('cookie-parser');
+const passport = require('passport');
+require('./config/passport')(passport);
 const adminController = require('./controllers/adminController'); // Import your adminController
 
 require('dotenv').config();
@@ -41,8 +43,14 @@ app.set('view engine', 'ejs');
 app.use('/', userRouter);
 app.use('/admin', adminRouter);
 app.use("*", (req,res) => {
+  // req.session.user = false;
+  // res.clearCookie("userJwt")
   res.render('errorpage')
 })
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 
 // Call the admin function to create the admin user during initialization
 // adminController.admin()
