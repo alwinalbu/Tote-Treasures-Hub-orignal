@@ -61,7 +61,7 @@ router.route('/signup')
     userSignupValidation,
     validate,
     (req, res, next) => {
-      console.log('Post signup handler triggered'); // Add a log to check if the post signup handler is being executed
+      console.log('Post signup handler triggered'); 
       userController.postUserSignup(req, res, next);
     }
   );
@@ -92,7 +92,7 @@ router.route('/search')
 
 
 router.route('/productViewDetailspage/:id')
-.get(userAuth.userTokenAuth,userController.getproductViewDetailspage)
+.get(userController.getproductViewDetailspage)
 
 
 // ------------------------------------------------Wishlist--------------------------------------------------------
@@ -184,9 +184,24 @@ router.route('/order/details/:_id')
 router.route('/order/cancelorder/:_id')
 .post(userAuth.userTokenAuth, userController.cancelOrder);
 
+router.route('/order/return/:_id')
+.post(userAuth.userTokenAuth, userController.returnOrder);
+
+router.route('/order/cancelRequest/:_id')
+.post(userAuth.userTokenAuth, userController.CancelreturnOrder);
 
 
-// -----------------------------------------------logout-------------------------------------------------------
+// ---------------------------------------download invoice of order for user ----------------------------------------------------------------
+
+router.route('/download-invoice')
+.post(userAuth.userTokenAuth,userController.downloadInvoice)
+
+
+router.route('/download-invoice/:_id')
+.get(userAuth.userTokenAuth,userController.downloadfile)
+
+
+// -----------------------------------------------logout-------------------------------------------------------------------------------------
 
 router.route('/logout')
 .get(userController.getUserLogout)

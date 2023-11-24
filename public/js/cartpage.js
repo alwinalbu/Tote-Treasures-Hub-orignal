@@ -119,9 +119,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const outOfStockMessage = document.querySelector(`#outOfStockMessage_${productId}`);
         if (outOfStockMessage) {
-          outOfStockMessage.style.display = 'block';
+          outOfStockMessage.style.display = 'none';
         }
-        return;
+      
       }
 
       updateQuantity(productId, -1);

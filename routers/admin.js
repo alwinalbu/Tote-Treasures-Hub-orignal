@@ -5,6 +5,7 @@ const brandController=require("../controllers/brandController")
 const categoryController=require("../controllers/categoryController")
 const productController=require("../controllers/productController")
 const orderController=require("../controllers/orderController")
+const couponController=require('../controllers/couponController')
 const upload = require('../middlewares/upload')
 const adminAuth=require('../middlewares/adminAuth')
 const Categories = require('../models/categorySchema')
@@ -23,15 +24,24 @@ router.route('/Login')
 router.route("/dashboard")
     .get(adminAuth.adminTokenAuth,adminController.getDashboard)
 
+router.route('/count-orders-by-day')
+ .get(adminAuth.adminTokenAuth,adminController.getCount)
+router.route('/count-orders-by-month')
+.get(adminAuth.adminTokenAuth,adminController.getCount)
+router.route('/count-orders-by-year')
+.get(adminAuth.adminTokenAuth,adminController.getCount)
+
 
 router.route('/daily')
-.get(adminAuth.adminTokenAuth,adminController.getproductsdaily)
+.get(adminAuth.adminTokenAuth,adminController.getBestSellingProducts)
 
 
+router.route('/monthly')
+.get(adminAuth.adminTokenAuth,adminController.getMonthlyBestSellingProducts)
 
 
-
-
+router.route('/yearly')
+.get(adminAuth.adminTokenAuth,adminController.getYearlyBestSellingProducts)
 
 
 
@@ -114,6 +124,16 @@ router.route('/order/updatestatus/:orderId')
 .put(adminAuth.adminTokenAuth,orderController.changeStatus)
 
 
+router.route('/admin/orders/acceptReturn/:orderId')
+.put(adminAuth.adminTokenAuth,orderController.acceptReturn)
+
+router.route('/orders/cancelReturn/:orderId')
+.put(adminAuth.adminTokenAuth,orderController.cancelReturn)
+
+// ----------------------------------------------------Coupon------------------------------------------------------
+
+router.route('/coupons')
+.get(adminAuth.adminTokenAuth,couponController.getCoupon)
 
 
 

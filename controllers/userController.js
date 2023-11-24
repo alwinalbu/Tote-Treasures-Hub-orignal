@@ -15,6 +15,7 @@ const crypto = require("crypto");
 const razorpay = require("../utility/razorpay");
 const mongoose = require('mongoose');
 const passport = require('passport');
+const invoice = require('../utility/invoice')
 
 
 
@@ -97,7 +98,7 @@ module.exports = {
             });
         } catch (error) {
             console.log(error);
-            // Handle the error appropriately, send an error response, etc.
+           
             res.status(500).send("An error occurred");
         }
     },
@@ -110,58 +111,57 @@ module.exports = {
 
     userLogin: async (req, res) => {
         try {
-            // Extract email and password from req.body
+            
             const email = req.body.Email;
             const password = req.body.Password;
 
-            // Attempt to find a user in the database based on the provided email.
+       
             const user = await User.findOne({ Email: email });
 
             console.log('login email', email);
             console.log('user:', user);
 
-            // Check if the user exists and their status is "Active" before proceeding.
+            
             if (user) {
                 if (user.Status === "Active") {
-                    // Compare the provided password with the stored hashed password.
+                    
                     const passwordMatch = await bcrypt.compare(password, user.Password);
 
                     console.log('Password:', password);
                     console.log('Password Match:', passwordMatch);
 
-                    // If the passwords match, create a JSON Web Token (JWT).
+                    
                     if (passwordMatch) {
                         const accessToken = jwt.sign(
                             { user: user._id },
                             process.env.ACCESS_TOKEN_SECRET,
-                            { expiresIn: '1h' } // Set the expiration time as needed
+                            { expiresIn: '1h' } 
                         );
 
-                        // Set the JWT as a cookie.
                         res.cookie('userJwt', accessToken, { maxAge: 60 * 60 * 1000 });
 
-                        // Store user information in the session.
+                      
                         req.session.user = user;
 
-                        // Redirect to the user's homepage.
+                        
                         return res.redirect('/homepage');
                     } else {
-                        // If passwords don't match, show an error and redirect to the login page.
+                    
                         req.flash('error', 'Invalid username or password');
                         return res.redirect('/login');
                     }
                 } else {
-                    // If the user's status is not "Active," show an error and redirect to the login page.
+                   
                     req.flash('error', 'User is Blocked');
                     return res.redirect('/login');
                 }
             } else {
-                // If no user is found, show an error and redirect to the login page.
+             
                 req.flash('error', 'User Email is NOT Verified So please Verify With OTP');
                 return res.redirect('/login');
             }
         } catch (error) {
-            // Handle any errors that occur during the process.
+          
             console.error(error);
             req.flash('error', 'An error occurred during login');
             res.redirect('/login');
@@ -265,11 +265,11 @@ module.exports = {
                 res.cookie("userjwt", accessToken, { maxAge: 60 * 1000 * 60 });
 
                 // Then redirect to the ajax
-                // res.redirect('/homepage');
+                
                 res.json({
                     success: true,
-                    redirectUrl: '/homepage',
-                    user: req.session.user
+                    user: req.session.user,
+                    redirectUrl: '/login',
                   });
 
             } else {
@@ -656,8 +656,17 @@ searchByTags: async (req, res) => {
             const cart = await Cart.findOne({ UserId: userId }).populate("Items.ProductId");
             console.log("cart in getCartpage:", cart);
     
-            if (!user || !cart) {
-                return res.status(404).send("User or cart not found");
+            // if (!user || !cart) {
+            //     return res.status(404).send("User or cart not found");
+            // }
+            if (!user) {
+                
+                return res.redirect("/login");
+            }
+            
+            if (!cart) {
+                
+                return res.render("user/cartpage",{ user, cart });
             }
     
             res.render("user/cartpage", { user, cart });
@@ -930,7 +939,7 @@ searchByTags: async (req, res) => {
         }
     },
 
-    //   --------------------------------------------------Orderlist--------------------------------------------------------
+ //   --------------------------------------------------Orderlist--------------------------------------------------------
 
     getOrderlist: async (req, res) => {
 
@@ -1006,7 +1015,7 @@ searchByTags: async (req, res) => {
       
 
 
-    // -------------------------------------------------checkout page-----------------------------------------------------
+// -------------------------------------------------checkout page-----------------------------------------------------
 
     getCheckout: async (req, res) => {
         const userId = req.session.user.user;
@@ -1062,8 +1071,8 @@ searchByTags: async (req, res) => {
         if (addressData && addressData.Address) {
             const add = {
                 Name: addressData.Address[0].Name,
-                Address: addressData.Address[0].AddressLane, // Using 'AddressLane' from the User schema
-                Pincode: addressData.Address[0].Pincode.toString(), // Ensure Pincode is converted to String
+                Address: addressData.Address[0].AddressLane, 
+                Pincode: addressData.Address[0].Pincode.toString(), 
                 City: addressData.Address[0].City,
                 State: addressData.Address[0].State,
                 Mobile: addressData.Address[0].Mobile,
@@ -1073,14 +1082,14 @@ searchByTags: async (req, res) => {
             const currentDate = new Date();
             const fourDaysFromNow = new Date(currentDate);
             fourDaysFromNow.setDate(currentDate.getDate() + 4);
-
+            const deliveryDate = fourDaysFromNow.toLocaleDateString();
           
 
             const newOrders = new Order({
                 UserId: userId,
                 Items: cart.Items,
                 OrderDate:currentDate,
-                fourDaysFromNow,
+                deliveryDate,
                 TotalPrice: amount,
                 Address: add,
                 PaymentMethod: PaymentMethod,
@@ -1095,7 +1104,7 @@ searchByTags: async (req, res) => {
             console.log("new order which is saved is ", order);
 
             req.session.orderId = order._id;
-            //   ---------------------------------------------stock modifying-----------------------------------------------
+  //   ---------------------------------------------stock modifying-----------------------------------------------
 
             for (const item of order.Items) {
 
@@ -1117,7 +1126,8 @@ searchByTags: async (req, res) => {
                     }
                 }
             }
-            //   -------------------------------------------COD------MAIL SENDING ------------------------------------------------------
+//   -------------------------------------------COD------MAIL SENDING ------------------------------------------------------
+          
             if (PaymentMethod === "cod") {
                 // Email for Cash on Delivery
                 const transporter = nodemailer.createTransport({
@@ -1135,7 +1145,7 @@ searchByTags: async (req, res) => {
                     to: Email,
                     subject: "Your Orders!",
                     text:
-                        `Hello! ${user.Username} Your order has been received and will be processed within ${fourDaysFromNow} days.` +
+                        `Hello! ${user.Username} Your order has been received and will be processed within ${deliveryDate} days.` +
                         ` your total price is ${req.session.totalPrice}`,
                 };
 
@@ -1145,45 +1155,42 @@ searchByTags: async (req, res) => {
                     }
                     console.log("Success");
                 });
+                
+                await Cart.findByIdAndDelete(cart._id);
 
                 res.json({ codSuccess: true });
-            } else {
-
-                try {
-                    const orderData = {
-                        amount: amount,
-                        currency: "INR",
-                        receipt: req.session.orderId,
-                    };
-
-                    const createdOrder = await razorpay.createRazorpayOrder(orderData);
-
+            }  else if(PaymentMethod === "online") {
+                const order = {
+                  amount: amount,
+                  currency: "INR",
+                  receipt: req.session.orderId,
+                };
+                await razorpay
+                  .createRazorpayOrder(order)
+                  .then((createdOrder) => {
                     console.log("payment response", createdOrder);
-
-                    res.json({ createdOrder, orderData });
-
-                } catch (err) {
+                    res.json({ onlineSuccess:true, createdOrder, order });
+                  })
+                  .catch(async(err) => {
                     console.log(err);
-                    // Handle the error, perhaps send an error response
-                    res.status(500).json({ error: 'An error occurred' });
-                }
-
+                    await Cart.findByIdAndDelete(cart._id);
+                  });                
             }
         } else {
-            // Handle the case where address data is not found
+           
             console.error('Address data not found.');
-            // You might want to send an error response or handle this case appropriately
+            
         }
     },
-        // -----------------------------------------------END-----------------------------------------------------------------------------------
+        
+// -----------------------------------------------END-----------------------------------------------------------------------------------
 
 
 
 
 
 
-
-        // ------------------------------------------------------verifyPayment-------------------------------------------------------------------
+ // ------------------------------------------------------verifyPayment-------------------------------------------------------------------
 
         verifyPayment: async (req, res) => {
 
@@ -1217,16 +1224,7 @@ searchByTags: async (req, res) => {
         },
 
 
-
-
-
-
-
-
-
-
-
-            // -----------------------------------------------------Address adding in checkoutpage---------------------------------------------------
+ // -----------------------------------------------------Address adding in checkoutpage---------------------------------------------------
 
             addAddressCheckout: async (req, res) => {
                 const userId = req.session.user.user;
@@ -1238,28 +1236,120 @@ searchByTags: async (req, res) => {
                 req.flash("success", "New Address Added successfully");
                 res.redirect("/checkout");
             },
+ // --------------------------------------------------OrderSuccess--------------------------------------------------------
 
-                // --------------------------------------------------OrderSuccess--------------------------------------------------------
 
-
-                getOrderSucces: async (req, res) => {
-                    const userId = req.session.user.user;
-                    const user = await User.findById(userId);
-                    res.render("user/orderSuccess", { user });
+  getOrderSucces: async (req, res) => {
+  const userId = req.session.user.user;
+  const user = await User.findById(userId);
+ res.render("user/orderSuccess", { user });
                 },
 
+// ------------------------------------------------download invoice------------------------------------------------------------------------------------
+
+downloadInvoice: async (req,res)=>{
+
+    try {
+        const orderData=await Order.findOne({
+            _id:req.body.orderId,
+        })
+        .populate("Address")
+        .populate('Items.ProductId');
+
+        const status = orderData.Status;
+        const paymentMethod = orderData.PaymentMethod;
+
+        console.log('oderdata for download is ',orderData);
+        
+        const filePath=await invoice.order(orderData,status,paymentMethod)
+
+        console.log('file path here is for download is  ',filePath);
+
+        const orderId=orderData._id;
+
+        res.json({orderId});
+
+    } catch (error) {
+        console.error("Error in downloadInvoice:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+},
+
+
+downloadfile:async (req,res)=>{
+
+const id=req.params._id;
+
+console.log('download id is here ',id);
+
+const filePath=`C:/Users/DELL 7490/Desktop/project/public/pdf/${id}.pdf`
+res.download(filePath, `invoice.pdf`);
+
+},
+
+// ----------------------------------------------------------Retrun the order----------------------------------------------------
+
+returnOrder: async (req, res) => {
+    const orderId = req.params._id;
+    const reason = req.body.returnReason;
+
+    try {
+        console.log("Reason for return is:", reason);
+
+        const order = await Order.findOneAndUpdate(
+            { _id: orderId },
+            { $set: { Status: 'Return Pending', ReturnReason: reason } },
+            { new: true }
+        );
+
+        if (!order) {
+            return res.status(200).json({ message: "Order not found" });
+        }
+
+        console.log("Return order status:", order.Status);
+
+        return res.status(200).json({
+            message: "Return requested successfully",
+            order: order, // Include the updated order in the response
+        });
+    } catch (error) {
+        console.error('Error Requesting return:', error.message);
+        return res.status(500).json({ error: "Error requesting return" });
+    }
+},
 
 
 
-                    // -----------------------------------------------------user logout-------------------------------------------------
+CancelreturnOrder: async(req,res)=>{
+    const orderId = req.params._id;
+    
+    try {
+        const order = await Order.findOneAndUpdate(
+            { _id: orderId },
+            { $set: { Status: "Delivered", ReturnReason: null } }, 
+            { new: true }
+        );
+
+        if (!order) {
+            return res.status(404).json({ error: "Order not found" });
+        }
+
+        // Send a JSON response indicating success
+        return res.status(200).json({ message: "Return request canceled successfully" });
+    } catch (error) {
+        console.error("Error canceling return request:", error);
+        return res.status(500).json({ error: "Error canceling return request" });
+    }
+
+},
+ // -----------------------------------------------------user logout-------------------------------------------------
 
 
-
-                    getUserLogout: (req, res) => {
-                        req.session.user = false;
-                        res.clearCookie("userJwt");
-                        res.redirect("/login");
-                    },
+ getUserLogout: (req, res) => {
+  req.session.user = false;
+  res.clearCookie("userJwt");
+  res.redirect("/login");
+ },
 
 };
 

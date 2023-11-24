@@ -5,6 +5,7 @@ const Brand=require("../models/brandSchema")
 const Order=require('../models/orderSchema')
 const Products=require('../models/productSchema')
 const Category = require('../models/categorySchema')
+const moment = require("moment");
 
 
 const bcrypt = require("bcrypt");
@@ -31,13 +32,14 @@ module.exports = {
         res.redirect("/admin/login");
       },
 
-    getLogin: async (req, res) => {
+      getLogin: async (req, res) => {
         try {
-            res.render("admin/adminLogin");
+            res.render("admin/adminLogin", { admin: req.session.admin });
         } catch (error) {
             console.log(error);
         }
     },
+    
     postLogin: async (req, res) => {
         try {
             const Email = req.body.Email;
@@ -125,7 +127,137 @@ module.exports = {
       }
   },
   
-  
+//   -------------------------------------chart day month and year-------------------------------------------------
+
+getCount: async (req, res) => {
+    try {
+      const orders = await Order.find({
+        Status: {
+          $nin:["returned","Cancelled","Rejected"]
+        }
+      });
+      const orderCountsByDay = {};
+      const totalAmountByDay = {};
+      const orderCountsByMonthYear = {};
+      const totalAmountByMonthYear = {};
+      const orderCountsByYear = {};
+      const totalAmountByYear = {};
+      let labelsByCount;
+      let labelsByAmount;
+      let dataByCount;
+      let dataByAmount;
+      console.log('outside')
+      orders.forEach((order) => {
+        console.log(order,'inside')
+        const orderDate = moment(order.OrderDate, "ddd, MMM D, YYYY h:mm A");
+        const dayMonthYear = orderDate.format("YYYY-MM-DD");
+        const monthYear = orderDate.format("YYYY-MM");
+        const year = orderDate.format("YYYY");
+        console.log("order date is :",orderDate);
+        
+        if (req.url === "/count-orders-by-day") {
+          console.log("count");
+          if (!orderCountsByDay[dayMonthYear]) {
+            orderCountsByDay[dayMonthYear] = 1;
+            totalAmountByDay[dayMonthYear] = order.TotalPrice
+          } else {
+            orderCountsByDay[dayMonthYear]++;
+            totalAmountByDay[dayMonthYear] += order.TotalPrice
+          }
+          const ordersByDay = Object.keys(orderCountsByDay).map(
+            (dayMonthYear) => ({
+              _id: dayMonthYear,
+              count: orderCountsByDay[dayMonthYear],
+            })
+          );
+          const amountsByDay = Object.keys(totalAmountByDay).map(
+            (dayMonthYear) => ({
+              _id: dayMonthYear,
+              total: totalAmountByDay[dayMonthYear],
+            })
+          );
+          amountsByDay.sort((a,b)=> (a._id < b._id ? -1 : 1));
+          ordersByDay.sort((a, b) => (a._id < b._id ? -1 : 1));
+          labelsByCount = ordersByDay.map((entry) =>
+            moment(entry._id, "YYYY-MM-DD").format("DD MMM YYYY")
+          );
+          labelsByAmount = amountsByDay.map((entry) =>
+            moment(entry._id, "YYYY-MM-DD").format("DD MMM YYYY")
+          );
+          dataByCount = ordersByDay.map((entry) => entry.count);
+          dataByAmount = amountsByDay.map((entry) => entry.total);
+
+
+        } else if (req.url === "/count-orders-by-month") {
+          if (!orderCountsByMonthYear[monthYear]) {
+            orderCountsByMonthYear[monthYear] = 1;
+            totalAmountByMonthYear[monthYear] = order.TotalPrice;
+          } else {
+            orderCountsByMonthYear[monthYear]++;
+            totalAmountByMonthYear[monthYear] += order.TotalPrice;
+          }
+        
+          const ordersByMonth = Object.keys(orderCountsByMonthYear).map(
+            (monthYear) => ({
+              _id: monthYear,
+              count: orderCountsByMonthYear[monthYear],
+            })
+          );
+          const amountsByMonth = Object.keys(totalAmountByMonthYear).map(
+            (monthYear) => ({
+              _id: monthYear,
+              total: totalAmountByMonthYear[monthYear],
+            })
+          );
+          console.log("by monthhh",amountsByMonth);
+        
+          ordersByMonth.sort((a, b) => (a._id < b._id ? -1 : 1));
+          amountsByMonth.sort((a, b) => (a._id < b._id ? -1 : 1));
+        
+          labelsByCount = ordersByMonth.map((entry) =>
+            moment(entry._id, "YYYY-MM").format("MMM YYYY")
+          );
+          labelsByAmount = amountsByMonth.map((entry) =>
+            moment(entry._id, "YYYY-MM").format("MMM YYYY")
+          );
+          dataByCount = ordersByMonth.map((entry) => entry.count);
+          dataByAmount = amountsByMonth.map((entry) => entry.total);
+        } else if (req.url === "/count-orders-by-year") {
+          // Count orders by year
+          if (!orderCountsByYear[year]) {
+            orderCountsByYear[year] = 1;
+            totalAmountByYear[year] = order.TotalPrice;
+          } else {
+            orderCountsByYear[year]++;
+            totalAmountByYear[year] += order.TotalPrice;
+          }
+        
+          const ordersByYear = Object.keys(orderCountsByYear).map((year) => ({
+            _id: year,
+            count: orderCountsByYear[year],
+          }));
+          const amountsByYear = Object.keys(totalAmountByYear).map((year) => ({
+            _id: year,
+            total: totalAmountByYear[year],
+          }));
+        
+          ordersByYear.sort((a, b) => (a._id < b._id ? -1 : 1));
+          amountsByYear.sort((a, b) => (a._id < b._id ? -1 : 1));
+        
+          labelsByCount = ordersByYear.map((entry) => entry._id);
+          labelsByAmount = amountsByYear.map((entry) => entry._id);
+          dataByCount = ordersByYear.map((entry) => entry.count);
+          dataByAmount = amountsByYear.map((entry) => entry.total);
+        }
+      });
+
+
+      res.json({ labelsByCount,labelsByAmount, dataByCount, dataByAmount });
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
 
     getUser: async (req, res) => {
         try {
@@ -196,15 +328,12 @@ module.exports = {
 
 // ----------------------------------------------------------Dashboard things--------------------------------------
 
-getproductsdaily: async (req, res) => {
+getBestSellingProducts: async (req, res) => {
   try {
-      console.log("reached inside of daily products");
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
-      console.log("date today is :",today)
-
-      const dailyProducts = await Order.aggregate([
+      const bestSellingProducts = await Order.aggregate([
           {
               $match: {
                   OrderDate: { $gte: today },
@@ -214,9 +343,21 @@ getproductsdaily: async (req, res) => {
               $unwind: '$Items',
           },
           {
+              $group: {
+                  _id: '$Items.ProductId',
+                  totalSold: { $sum: '$Items.Quantity' },
+              },
+          },
+          {
+              $sort: { totalSold: -1 },
+          },
+          {
+              $limit: 5, // Adjust the limit based on the number of top products you want to retrieve
+          },
+          {
               $lookup: {
-                  from: 'products', 
-                  localField: 'Items.ProductId',
+                  from: 'products',
+                  localField: '_id',
                   foreignField: '_id',
                   as: 'productDetails',
               },
@@ -225,209 +366,156 @@ getproductsdaily: async (req, res) => {
               $unwind: '$productDetails',
           },
           {
-              $lookup: {
-                  from: 'Categories', 
-                  localField: 'productDetails.Category',
-                  foreignField: '_id',
-                  as: 'categoryDetails',
-              },
-          },
-          {
               $project: {
                   _id: '$productDetails._id',
                   ProductName: '$productDetails.ProductName',
                   Price: '$productDetails.DiscountAmount',
                   Status: '$productDetails.Status',
-                  Category: {
-                      _id: '$categoryDetails._id',
-                      Name: '$categoryDetails.Name',
-                      image: '$categoryDetails.image',
-                  },
                   images: '$productDetails.images',
+                  TotalSold: '$totalSold',
               },
           },
       ]);
 
-      console.log("After aggregation pipeline:", dailyProducts);
-
-      res.json({ products: dailyProducts });
-
-      console.log("daily answer is: ",dailyProducts)
+      res.json({ bestSellingProducts });
 
   } catch (error) {
-      console.error('Error fetching daily product data:', error);
+      console.error('Error fetching best-selling product data:', error);
       res.status(500).json({ error: 'Internal Server Error' });
   }
 },
 
-// getproductsdaily: async (req, res) => {
-//     try {
-//         console.log("Reached inside of daily products");
-  
-//         let today = new Date();
-//         today.setUTCHours(0, 0, 0, 0);
-//         console.log("Date today is:", today);
-  
-//         dailyProducts = await Order.aggregate([
-//             {
-//                 $match: {
-//                     OrderDate: { $gte: today },
-//                 },
-//             },
-//         ]);
-  
-//         console.log("After $match stage:", dailyProducts);
-  
-//         dailyProducts = await Order.aggregate([
-//             {
-//                 $match: {
-//                     OrderDate: { $gte: today },
-//                 },
-//             },
-//             {
-//                 $unwind: '$Items',
-//             },
-//         ]);
-  
-//         console.log("After $unwind '$Items' stage:", dailyProducts);
-  
-//         dailyProducts = await Order.aggregate([
-//             {
-//                 $match: {
-//                     OrderDate: { $gte: today },
-//                 },
-//             },
-//             {
-//                 $unwind: '$Items',
-//             },
-//             {
-//                 $lookup: {
-//                     from: 'products', 
-//                     localField: 'Items.ProductId',
-//                     foreignField: '_id',
-//                     as: 'productDetails',
-//                 },
-//             },
-//         ]);
-  
-//         console.log("After $lookup 'products' stage:", dailyProducts);
-  
-//         dailyProducts = await Order.aggregate([
-//             {
-//                 $match: {
-//                     OrderDate: { $gte: today },
-//                 },
-//             },
-//             {
-//                 $unwind: '$Items',
-//             },
-//             {
-//                 $lookup: {
-//                     from: 'products', 
-//                     localField: 'Items.ProductId',
-//                     foreignField: '_id',
-//                     as: 'productDetails',
-//                 },
-//             },
-//             {
-//                 $unwind: '$productDetails',
-//             },
-//         ]);
-  
-//         console.log("After $unwind '$productDetails' stage:", dailyProducts);
-  
-//         dailyProducts = await Order.aggregate([
-//             {
-//                 $match: {
-//                     OrderDate: { $gte: today },
-//                 },
-//             },
-//             {
-//                 $unwind: '$Items',
-//             },
-//             {
-//                 $lookup: {
-//                     from: 'products', 
-//                     localField: 'Items.ProductId',
-//                     foreignField: '_id',
-//                     as: 'productDetails',
-//                 },
-//             },
-//             {
-//                 $unwind: '$productDetails',
-//             },
-//             {
-//                 $lookup: {
-//                     from: 'Categories', 
-//                     localField: 'productDetails.Category',
-//                     foreignField: '_id',
-//                     as: 'categoryDetails',
-//                 },
-//             },
-//         ]);
-  
-//         console.log("After $lookup 'Categories' stage:", dailyProducts);
-  
-//         dailyProducts = await Order.aggregate([
-//             {
-//                 $match: {
-//                     OrderDate: { $gte: today },
-//                 },
-//             },
-//             {
-//                 $unwind: '$Items',
-//             },
-//             {
-//                 $lookup: {
-//                     from: 'products', 
-//                     localField: 'Items.ProductId',
-//                     foreignField: '_id',
-//                     as: 'productDetails',
-//                 },
-//             },
-//             {
-//                 $unwind: '$productDetails',
-//             },
-//             {
-//                 $lookup: {
-//                     from: 'Categories', 
-//                     localField: 'productDetails.Category',
-//                     foreignField: '_id',
-//                     as: 'categoryDetails',
-//                 },
-//             },
-//             {
-//                 $project: {
-//                     _id: '$productDetails._id',
-//                     ProductName: '$productDetails.ProductName',
-//                     Price: '$productDetails.DiscountAmount',
-//                     Status: '$productDetails.Status',
-//                     Category: {
-//                         _id: '$categoryDetails._id',
-//                         Name: '$categoryDetails.Name',
-//                         image: '$categoryDetails.image',
-//                     },
-//                     images: '$productDetails.images',
-//                 },
-//             },
-//         ]);
-  
-//         console.log("After $project stage:", dailyProducts);
-  
-//         res.json({ products: dailyProducts });
-  
-//     } catch (error) {
-//         console.error('Error fetching daily product data:', error);
-//         res.status(500).json({ error: 'Internal Server Error' });
-//     }
-//   },
-  
+// ------------------------------------------Monthly products-----------------------------------------------------
 
+getMonthlyBestSellingProducts: async (req, res) => {
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    getAdminLogout: (req, res) => {
-        req.session.admin = false;
-        res.clearCookie("adminJwt");
-        res.redirect("/admin/login");
+    // Calculate the first day of the current month
+    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+    const monthlyBestSellingProducts = await Order.aggregate([
+      {
+        $match: {
+          OrderDate: { $gte: firstDayOfMonth, $lt: today },
+        },
       },
+      {
+        $unwind: '$Items',
+      },
+      {
+        $group: {
+          _id: '$Items.ProductId',
+          totalSold: { $sum: '$Items.Quantity' },
+        },
+      },
+      {
+        $sort: { totalSold: -1 },
+      },
+      {
+        $limit: 5,
+      },
+      {
+        $lookup: {
+          from: 'products',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'productDetails',
+        },
+      },
+      {
+        $unwind: '$productDetails',
+      },
+      {
+        $project: {
+          _id: '$productDetails._id',
+          ProductName: '$productDetails.ProductName',
+          Price: '$productDetails.DiscountAmount',
+          Status: '$productDetails.Status',
+          images: '$productDetails.images',
+          TotalSold: '$totalSold',
+        },
+      },
+    ]);
+
+    res.json({ monthlyBestSellingProducts });
+  } catch (error) {
+    console.error('Error fetching monthly best-selling product data:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+},
+
+// ----------------------------------------------Yearly Products------------------------------------------------
+
+getYearlyBestSellingProducts: async (req, res) => {
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Calculate the first day of the current year
+    const firstDayOfYear = new Date(today.getFullYear(), 0, 1);
+
+    const yearlyBestSellingProducts = await Order.aggregate([
+      {
+        $match: {
+          OrderDate: { $gte: firstDayOfYear, $lt: today },
+        },
+      },
+      {
+        $unwind: '$Items',
+      },
+      {
+        $group: {
+          _id: '$Items.ProductId',
+          totalSold: { $sum: '$Items.Quantity' },
+        },
+      },
+      {
+        $sort: { totalSold: -1 },
+      },
+      {
+        $limit: 5,
+      },
+      {
+        $lookup: {
+          from: 'products',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'productDetails',
+        },
+      },
+      {
+        $unwind: '$productDetails',
+      },
+      {
+        $project: {
+          _id: '$productDetails._id',
+          ProductName: '$productDetails.ProductName',
+          Price: '$productDetails.DiscountAmount',
+          Status: '$productDetails.Status',
+          images: '$productDetails.images',
+          TotalSold: '$totalSold',
+        },
+      },
+    ]);
+
+    res.json({ yearlyBestSellingProducts });
+  } catch (error) {
+    console.error('Error fetching yearly best-selling product data:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+},
+
+
+
+getAdminLogout: (req, res) => {
+  if (req.session.admin) {
+      req.session.admin = null;
+      res.clearCookie("adminJwt");
+  }
+  res.redirect("/admin/login");
+},
+
     
 };

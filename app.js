@@ -51,6 +51,9 @@ app.use("*", (req,res) => {
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Initialize Magnific Popup
+app.use('/magnific-popup', express.static(path.join(__dirname, 'node_modules/magnific-popup/dist')));
+
 
 // Call the admin function to create the admin user during initialization
 // adminController.admin()

@@ -1,6 +1,6 @@
 
 $(document).ready(function () {
-    // Variables to store the initial duration and countdown interval
+  
     let duration = 60; // Duration in seconds
     let countdown;
   

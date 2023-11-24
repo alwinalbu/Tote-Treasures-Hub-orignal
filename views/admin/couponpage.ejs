@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Coupon Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href='https://fonts.googleapis.com/css?family=Italianno' rel='stylesheet'>
+    <link rel="stylesheet" type="text/css" href="/css/admin/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg  main-nav">
+        <div class="container-fluid d-flex align-items-center">
+            <button class="btn btn-outline-light" type="button" data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <a class="navbar-brand d-flex justify-content-start" href="#">
+                <img src="/images/logo.png" alt="Bootstrap" style="height: 70px; width: auto;">
+            </a>
+            <h1 class="header m-0">ToteTreasures Hub </h1>
+            <div class="collapse navbar-collapse d-flex justify-content-end">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="btn btn-danger " href="/admin/logout">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Offcanvas menu -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasMenuLabel">ADMINS OPTIONS</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body p-0">
+            <ul class="list-group custom-list">
+                <a href="/admin/dashboard" class="list-group-item custom-list-item">
+                    <i class="fas fa-house me-2"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/admin/product" class="list-group-item custom-list-item">
+                    <i class="fas fa-bag-shopping me-2"></i>
+                    <span>Products</span>
+                </a>
+                <a href="/admin/order" class="list-group-item custom-list-item">
+                    <i class="fas fa-cart-shopping me-2"></i>
+                    <span>Orders</span>
+                </a>
+                <a href="/admin/userslist" class="list-group-item custom-list-item">
+                    <i class="fas fa-users me-2"></i>
+                    <span>Customers</span>
+                </a>
+                <a href="/admin/coupons" class="list-group-item custom-list-item">
+                    <i class="fas fa-id-card me-2"></i>
+                    <span>Coupons</span>
+                </a>
+                <a href="/admin/banners" class="list-group-item custom-list-item">
+                    <i class="fas fa-flag me-2"></i>
+                    <span>Banners</span>
+                </a>
+                <a href="/admin/brandpage" class="list-group-item custom-list-item">
+                    <i class="fas fa-user-plus me-2"></i>
+                    <span>Brands</span>
+                </a>
+                <a href="/admin/Categorypage" class="list-group-item custom-list-item">
+                    <i class="fas fa-list me-2"></i>
+                    <span>Categories</span>
+                </a>
+                <a href="/admin/payments" class="list-group-item custom-list-item">
+                    <i class="fas fa-money-bill me-2"></i>
+                    <span>Payments</span>
+                </a>
+            </ul>
+        </div>
+    </div>
+
+     <!-- Add Coupon Modal -->
+     <div class="modal" id="addCouponModal">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <!-- Modal Header -->
+              <div class="modal-header">
+                  <h4 class="modal-title">Add New Coupon</h4>
+                  <button type="button" class="btn-close btn-info" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <!-- Modal Body -->
+              <div class="modal-body">
+                  <!-- Your form to add a new coupon goes here -->
+                  <form id="addCouponForm">
+                      <div class="form-group">
+                          <label for="couponName">Coupon Name:</label>
+                          <input type="text" class="form-control" id="couponName" required>
+                      </div>
+                      <div class="form-group">
+                          <label for="code">Coupon Code:</label>
+                          <input type="text" class="form-control" id="code" required>
+                      </div>
+                      <div class="form-group">
+                          <label for="discountType">Discount Type:</label>
+                          <select class="form-control" id="discountType" required>
+                              <option value="fixed">Fixed Amount</option>
+                          </select>
+                      </div>
+                      <div class="form-group">
+                          <label for="discountAmount">Discount Amount:</label>
+                          <input type="number" class="form-control" id="discountAmount" required>
+                      </div>
+                      <div class="form-group">
+                          <label for="minimumPurchase">Minimum Purchase:</label>
+                          <input type="number" class="form-control" id="minimumPurchase" required>
+                      </div>
+                      <div class="form-group">
+                          <label for="expirationDate">Expiration Date:</label>
+                          <input type="date" class="form-control" id="expirationDate" placeholder="Select the date for Expiration of coupon" required />
+                          <span id="dateError" style="color: red;"></span>
+                      </div>
+                      <button type="submit" class="btn btn-primary">Add Coupon</button>
+                  </form>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <!-- Coupon Cards -->
+  <div class="container mt-5">
+      <h2>Coupons</h2>
+      <!-- Check if there are coupons -->
+      <% if (coupons.length > 0) { %>
+      <div class="row" id="couponCards">
+          <% coupons.forEach(coupon => { %>
+          <div class="col-md-4 mt-3">
+              <div class="card">
+                  <div class="card-body">
+                      <h5 class="card-title">Code: <%= coupon.code %></h5>
+                      <p class="card-text">Discount: <%= coupon.discount_amount %></p>
+                      <p class="card-text">Minimum Purchase: $<%= coupon.minimum_purchase %></p>
+                      <p class="card-text">Expiration Date: <%= coupon.expiration_date.toISOString().split('T')[0] %></p>
+                      <!-- UsedBy information -->
+                      <% if (coupon.usedBy.length > 0) { %>
+                      <h6>Used By:</h6>
+                      <ul>
+                          <% coupon.usedBy.forEach(use => { %>
+                          <li>User ID: <%= use.userId %>, Coupon Code: <%= use.couponCode %>, Status: <%= use.status %></li>
+                          <% }); %>
+                      </ul>
+                      <% } %>
+                      <!-- Edit and Delete buttons -->
+                      <button class="btn btn-primary" onclick="editCoupon('<%= coupon._id %>')">Edit</button>
+                      <button class="btn btn-danger" onclick="deleteCoupon('<%= coupon._id %>')">Delete</button>
+                  </div>
+              </div>
+          </div>
+          <% }); %>
+      </div>
+      <% } else { %>
+      <!-- Display message if no coupons are available -->
+      <p>No coupons available. Add a coupon now!</p>
+      <% } %>
+      <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addCouponModal">Add Coupon</button>
+  </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.js"
+        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.8/umd/popper.min.js"
+        integrity="sha512-TPh2Oxlg1zp+kz3nFA0C5vVC6leG/6mm1z9+mA81MI5eaUVqasPLO8Cuk4gMF4gUfP5etR73rgU/8PNMsSesoQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

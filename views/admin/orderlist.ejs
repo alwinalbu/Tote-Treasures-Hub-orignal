@@ -110,23 +110,28 @@
                             <td><%= new Date(order.OrderDate).toLocaleDateString() %></td>
                             <td><%= order.TotalPrice %></td>
                             <td>
-                                <% if (order.Status !== 'Cancelled') { %>
-                                    <% const currentStatus = order.Status || 'Order Placed'; %>
-                                    <% if (currentStatus !== 'Rejected') { %>
-                                        <select id="statusSelect<%= index %>" name="status" onchange="changeOrderStatus('<%= order._id %>', <%= index %> )">
-                                            <option value="Order Placed" <%= currentStatus === 'Order Placed' ? 'selected' : '' %>>Order Placed</option>
-                                            <option value="Shipped" <%= currentStatus === 'Shipped' ? 'selected' : '' %>>Shipped</option>
-                                            <option value="Delivered" <%= currentStatus === 'Delivered' ? 'selected' : '' %>>Delivered</option>
-                                            <option value="Rejected" <%= currentStatus === 'Rejected' ? 'selected' : '' %>>Rejected</option>
-                                            <!-- Add other status options as required -->
-                                        </select>
-                                    <% } else { %>
-                                        <span>Rejected</span>
-                                    <% } %>
-                                <% } else { %>
+                                <% if (order.Status === "Return Pending") { %>
+                                    <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#returnModal<%= order._id %>">Return Requested</button>
+                                  <% } else if (order.Status === 'Cancelled') { %>
                                     Cancelled
+                                  <% } else if (order.Status === 'Return Canceled') { %>
+                                    Return Canceled
+                                  <% } else if (order.Status === 'Return Accepted') { %>
+                                    Returned
+                                  <% } else if (order.Status === 'Rejected') { %>
+                                    Rejected                             
+                                <% } else { %>
+                                  <% if (order.Status !== 'Return Pending') { %>
+                                    <% const currentStatus = order.Status || 'Order Placed'; %>
+                                    <select id="statusSelect<%= index %>" name="status" onchange="changeOrderStatus('<%= order._id %>', '<%= index %>' )">
+                                      <option value="Order Placed" <%= currentStatus === 'Order Placed' ? 'selected' : '' %>>Order Placed</option>
+                                      <option value="Shipped" <%= currentStatus === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                                      <option value="Delivered" <%= currentStatus === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                                      <option value="Rejected" <%= currentStatus === 'Rejected' ? 'selected' : '' %>>Rejected</option>
+                                    </select>
+                                  <% } %>
                                 <% } %>
-                            </td>
+                              </td>
                             <td>
                                 <a href="/admin/order/details/<%= order._id %>">
                                     <button class="btn btn-primary">View Details</button>
@@ -167,6 +172,30 @@
             <p>No results found.</p>
         <% } %>
     </div>
+
+
+    <% orders.forEach(function (order) { %>
+        <div class="modal fade" id="returnModal<%= order._id %>" tabindex="-1"  aria-labelledby="returnModalLabel<%= order._id %>" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="returnModalLabel<%= order._id %>">Return Request Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <p>Are you sure you want to accept the return request?</p>
+
+                <p>Return Reason: <%= order.ReturnReason || 'Not provided' %></p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" onclick="cancelReturn('<%= order._id %>')">Cancel Return Request</button>
+                <button type="button" class="btn btn-dark" onclick="acceptReturn('<%= order._id %>')">Accept Return</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <% }); %>
     
   
   

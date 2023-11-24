@@ -26,6 +26,7 @@ const ordersSchema = new Schema({
   PaymentStatus: { type: String, default: "Pending" },
 
   Address: { type: shippedAddressSchema },
+  ReturnReason: String,
 });
 
 

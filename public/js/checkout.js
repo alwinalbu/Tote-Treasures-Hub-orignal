@@ -1,3 +1,4 @@
+
 $(document).ready(function() {
     $('input[name="Address"]').on('change', function() {
         $('input[name="Address"]').removeAttr('checked'); // Unchecks all addresses
@@ -18,35 +19,37 @@ $("#form-checkout").submit((e)=>{
         return
     }
     $.ajax({
-        url:'/checkout',
-        method:'post',
-        data:$('#form-checkout').serialize(),
-        success:(response)=>{
-            if(response.codSuccess){
-                window.location='/orderSuccess'
-            }else{
-                handlePayNowClick(response)
-            }
-        }
-    })
+      url: '/checkout',
+      method: 'post',
+      data: $('#form-checkout').serialize(),
+      success: (response) => {
+          if (response.codSuccess) {
+              window.location = '/orderSuccess';
+          } else if (response.onlineSuccess) {
+              console.log("reached with response as online payment here inside ajax");
+              handlePayNowClick(response);
+          }
+      }
+  });
+  
 })
 
 function handlePayNowClick(order) {
-    // Define the options required for the payment
+   
     var options = {
-      "key": "rzp_test_SpKlZZQ2JqQYDe", // Your Razorpay API Key
-      "amount": order.createdOrder.amount, // The amount to be charged, extracted from the created order
+      "key": "rzp_test_SpKlZZQ2JqQYDe", 
+      "amount": order.createdOrder.amount, 
       "currency": "INR",
       "name": "ToteTreasures Hub", 
       "description": "Test Transaction", 
       "image": "/images/logo.png",
-      "order_id": order.createdOrder.id, // The ID of the order
-      // Handler function to be executed when the payment process is completed
+      "order_id": order.createdOrder.id, 
+      
       "handler": function (response) {
-        verifyPayment(response, order); // Call a function to verify the payment using the response data and the order details
+        verifyPayment(response, order); 
       },
       "prefill": {
-        "user": order.order.UserId, // Pre-fill information about the user (in this case, user ID from the order)
+        "user": order.order.UserId, 
       },
       "notes": {
         "address": "Razorpay Corporate Office" 
@@ -55,11 +58,9 @@ function handlePayNowClick(order) {
         "color": "#33ccb3" 
       }
     };
-    
-    // Create a new instance of Razorpay with the provided options
+   
     var rzp1 = new Razorpay(options);
     
-    // Open the payment dialog/iframe for the user to proceed with the payment
     rzp1.open();
   }
 

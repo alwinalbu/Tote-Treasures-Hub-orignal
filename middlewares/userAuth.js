@@ -7,15 +7,18 @@ module.exports = {
         if (token) {
             jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
                 if (err) {
+                    
                     res.redirect("/signup")
                 }
                 req.session.user = user;
                 next()
             })
         }else{
+            console.log("error here while sign up")
             req.session.user = false
             const error = req.flash('Please Login or Signup');
-            res.render("user/signup", { err: error, user: '' });
+            res.render("user/signup", { err: error, user: '' });  
+
         }
     },
     

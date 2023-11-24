@@ -10,7 +10,7 @@
     <link href='https://fonts.googleapis.com/css?family=Italianno' rel='stylesheet'>
     <link rel="stylesheet" type="text/css" href="/css/landingpage.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
-    <script src="/js/imagezoom.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.css">
 </head>
 
 <body>
@@ -82,15 +82,21 @@
     <div class="container">
         <div class="row justify-content-center p-3">
             <div class="col-lg-6 col-md-8 col-sm-10 col-12">
-                <div class="row product-img justify-content-center" id="zoom">
-                    <div class="col-12  text-center">
-                        <img src="/uploads/<%= product.images[0] %>" class="img-fluid" alt="">
+                <div class="row product-img justify-content-center">
+                    <div class="col-12 text-center">
+                        <a href="/uploads/<%= product.images[0] %>" class="magnific-popup">
+                            <img src="/uploads/<%= product.images[0] %>" class="img-fluid" alt="">
+                        </a>
                     </div>
                     <div class="col-4 col-sm-3 col-md-2 my-2">
-                        <img src="/uploads/<%= product.images[1] %>" class="img-fluid" alt="">
+                        <a href="/uploads/<%= product.images[1] %>" class="magnific-popup">
+                            <img src="/uploads/<%= product.images[1] %>" class="img-fluid" alt="">
+                        </a>
                     </div>
                     <div class="col-4 col-sm-3 col-md-2 my-2">
-                        <img src="/uploads/<%= product.images[2] %>" class="img-fluid" alt="">
+                        <a href="/uploads/<%= product.images[2] %>" class="magnific-popup">
+                            <img src="/uploads/<%= product.images[2] %>" class="img-fluid" alt="">
+                        </a>
                     </div>
                 </div>
             </div>
@@ -154,10 +160,10 @@
                         class="btn btn-light border px-2 icon-hover-primary addtoWishLisitbutton"
                         onclick="addToWishlist(this)">
                         <% if (user && user.wishlist && user.wishlist.includes(product._id)) { %>
-                            <!-- Product is in the wishlist, use red heart -->
+                           
                             <i class="fa-heart fa-solid fa-lg px-1 text-danger"></i>
                         <% } else { %>
-                            <!-- Product is not in the wishlist, use secondary color heart -->
+                           
                             <i class="fa-heart fa-regular fa-lg px-1 text-secondary"></i>
                         <% } %>
                     </a>
@@ -173,21 +179,51 @@
     </div>
 
 
+   <!-- Include jQuery from CDN -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<!-- Include Magnific Popup JS from CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+    
+    <!-- Initialize Magnific Popup -->
+    <script>
+        $(document).ready(function() {
+            $('.magnific-popup').magnificPopup({
+                type: 'image',
+                gallery: {
+                    enabled: true
+                },
+                callbacks: {
+                    open: function() {
+                        // Add zoom effect on mouseover
+                        $('.mfp-figure').addClass('mfp-zoom-in');
+                    },
+                    beforeClose: function() {
+                        // Remove zoom effect on mouseout
+                        $('.mfp-figure').removeClass('mfp-zoom-in');
+                    }
+                }
+            });
+        });
+    </script>
+    
+    <!-- Include additional CSS for zoom effect -->
     <style>
-        /* Additional styling can be added if needed */
-        #zoom {
-            position: relative;
-            overflow: hidden;
+        .mfp-zoom-in .mfp-img {
+            transform: scale(1.3); /* Adjust the scale factor as needed */
+            transition: transform 0.6s ease-in-out;
+        }
+    
+        .mfp-zoom-in:hover .mfp-img {
+            transform: scale(1);
         }
     </style>
 
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="/js/imagezoom.js"></script>
 <script src="/js/wishlist.js"></script>
 
 </body>

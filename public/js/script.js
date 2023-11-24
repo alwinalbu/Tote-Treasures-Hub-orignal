@@ -1,16 +1,16 @@
 
 $(document).ready(function () {
-  // Variables to store the initial duration and countdown interval
-  let duration = 60; // Duration in seconds
+  
+  let duration = 60; 
   let countdown;
 
-  // References to DOM elements
+ 
   const timerDisplay = $("#timer");
   const resendOtp = $("#resendOtp");
   const otpInput = $("#number");
   const emailVerificationButton = $("#emailVerification");
 
-  // Function to update the countdown timer
+  
   function updateTimer() {
     const minutes = Math.floor(duration / 60);
     let seconds = duration % 60;
@@ -27,35 +27,37 @@ $(document).ready(function () {
     }
   }
 
-  // Initial call to display the full minute
+  
   updateTimer();
 
-  // Set up the countdown
+
   countdown = setInterval(updateTimer, 1000);
 
-  // Event handler for OTP validation
+  
   emailVerificationButton.click(function (e) {
-    e.preventDefault(); // Prevent the form from submitting
+    e.preventDefault(); 
 
     const otp = otpInput.val();
-    // Use AJAX to send the OTP for validation to the server
+
     $.ajax({
       type: "POST",
-      url: "/emailVerification", // Update with the  URL
-      data: { otp:otp }, // Send OTP as data
+      url: "/emailVerification", 
+      data: { otp:otp }, 
       success: function (response) {
 
         console.log('Response from server:', response);
 
         if (response.success) {
           clearInterval(countdown);
-          timerDisplay.text("OTP Validated");
-
-          // redirected to homepage
-
-          window.location.href = '/homepage?userId=' + response.user.userId;
-        } else {
-          // Handle unsuccessful OTP validation
+          timerDisplay.text(" Otp Validated Signup Successful");
+      
+          var redirectUrl = response.redirectUrl;
+          console.log("Redirect URL:", redirectUrl);
+      
+          window.location.href = redirectUrl;
+      }
+       else {
+         
           alert("Invalid OTP. Please try again.");
         }
       },

@@ -44,6 +44,49 @@
 }
 
 
+
+.horizontal-timeline .items {
+border-top: 2px solid #ddd;
+}
+
+.horizontal-timeline .items .items-list {
+position: relative;
+margin-right: 0;
+}
+
+.horizontal-timeline .items .items-list:before {
+content: "";
+position: absolute;
+height: 8px;
+width: 8px;
+border-radius: 50%;
+background-color: #ddd;
+top: 0;
+margin-top: -5px;
+}
+
+.horizontal-timeline .items .items-list {
+padding-top: 15px;
+}
+.blue-text {
+color: green;
+}
+.modal-backdrop {
+background-color: rgba(0, 0, 0, 0.5) !important; 
+}
+
+
+.order-item {
+    border: 1px solid #ccc;
+   
+    border-radius: 0.5rem;
+   
+    padding: 1rem;
+    
+    margin-bottom: 0.5rem;
+    
+}
+
 /* ------------------------------------cart----------------------------------- */
 
 @media (min-width: 1025px) {
@@ -51,4 +94,4 @@
     height: 100vh !important;
     }
     }
-
+    

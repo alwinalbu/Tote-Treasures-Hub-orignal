@@ -43,7 +43,7 @@ module.exports={
 
 
 
-      changeStatus: async (req, res) => {
+     changeStatus: async (req, res) => {
         console.log("Updating order status...");
       
         const orderId = req.params.orderId;
@@ -76,11 +76,72 @@ module.exports={
       
           await updatedOrder.save();
       
-          res.json(updatedOrder); // Respond with the updated order
+          res.json(updatedOrder); 
         } catch (error) {
           console.error("Error updating order status:", error);
           res.status(500).json({ error: "Internal Server Error" });
         }
       },
+
+
+// --------------------------------------------Cancel the Return Request----------------------------------------------------------------
+
+cancelReturn: async (req,res)=>{
+
+  try {
+
+    const orderId=req.params.orderId;
+
+    console.log("inside the cancel return id ",orderId)
+
+    const updatedOrder=await Order.findByIdAndUpdate(
+      { _id: orderId },
+      { $set: { Status: "Return Canceled"} }, 
+      { new: true }
+    )
+    res.json({ success: true, order: updatedOrder });
+
+  } catch (error) {
+    console.error('Error:',error);
+    res.status(500).json({success:false,error:'Internal Server Error'})
+    
+  }
+},
       
+
+
+// -------------------------------------------------Accept The Return Request----------------------------------------------------------------
+
+acceptReturn: async (req, res) => {
+  try {
+    const orderId = req.params.orderId;
+
+    console.log("REached inside the return ACCEPTANCE order id:",orderId);
+
+    const updatedOrder = await Order.findByIdAndUpdate(
+      { _id: orderId },
+      { $set: { Status: 'Return Accepted' } },
+      { new: true }
+    );
+
+    updatedOrder.PaymentStatus = "Refund Initiated";
+
+    for (const item of updatedOrder.Items) {
+      const product = await Products.findById(item.ProductId).exec(); 
+      product.AvailableQuantity += item.Quantity;
+      await product.save();
+
+      console.log("quantity got updated", product.AvailableQuantity);
+    }
+
+    await updatedOrder.save();
+
+    res.json({ success: true, message: 'Return accepted successfully', order: updatedOrder });
+
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+},
+
 }
