@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="/css/admin/productpage.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
+     
 
 </head>
 
@@ -87,59 +87,100 @@
         </div>
     </div>
 
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
-            <a href="#" onclick="history.back();" class="btn btn-warning">
+            <a href="#" onclick="history.back();" class="btn btn-warning mt-3">
                 <i class="bi bi-arrow-left"></i> Back
-              </a>
+            </a>
             <% if (order && order.Items.length > 0) { %>
-                <% order.Items.forEach((product, index) => { %>
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <div class="card">
-                            <img src="/uploads/<%=product.ProductId.images[0]%>" alt="Product Image">
-                            <div class="card-body">
-                                <h5>Order ID: <%= order._id %></h5>
-                                <p>Placed On: <%= order.OrderDate %></p>
-                                <h6><%= product.ProductId.ProductName %></h6>
-                                <p>Quantity: <%= product.Quantity %></p>
-                                <p>Price: ₹ <%= product.ProductId.DiscountAmount %> /-</p>
-                                <p>Via: <%= order.PaymentMethod %></p>
-                                <p>Status: <%= order.Status %></p>
-                                <p>PaymentStatus:<%= order.PaymentStatus %></p>
-                            </div>
+                <!-- Display Shipping Address in a Card -->
+                <div class="col-12 mt-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Shipping Address</h5>
+                            <p><%= order.Address.Name %></p>
+                            <p><%= order.Address.Address %></p>
+                            <p><%= order.Address.City %>, <%= order.Address.State %> - <%= order.Address.Pincode %></p>
+                            <p>Mobile: <%= order.Address.Mobile %></p>
                         </div>
                     </div>
-                <% }) %>
+                </div>
+    
+                <!-- Display Order Details in a Table -->
+                <div class="col-12 mt-3 table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Product Image</th>
+                                <th>Order ID</th>
+                                <th>Placed On</th>
+                                <th>Product Name</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Payment Method</th>
+                                <th>Status</th>
+                                <th>Payment Status</th>
+                                <% if (order.ReturnReason) { %>
+                                    <th>Return Reason</th>
+                                <% } %>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% order.Items.forEach((product, index) => { %>
+                                <tr>
+                                    <td><img src="/uploads/<%= product.ProductId.images[0] %>" alt="Product Image" class="img-thumbnail" style="max-width: 100px;"></td>
+                                    <td><%= order._id %></td>
+                                    <td><%= order.OrderDate.toLocaleString() %></td>
+                                    <td><%= product.ProductId.ProductName %></td>
+                                    <td><%= product.Quantity %></td>
+                                    <td>
+                                        <% if (product.ProductId.offer) { %>
+                                          ₹ <%= product.ProductId.offerPrice %> /-
+                                        <% } else { %>
+                                          ₹ <%= product.ProductId.DiscountAmount %> /-
+                                        <% } %>
+                                    </td>
+                                    <td><%= order.PaymentMethod %></td>
+                                    <td><%= order.Status %></td>
+                                    <td><%= order.PaymentStatus %></td>
+                                    <% if (order.ReturnReason) { %>
+                                        <td><%= order.ReturnReason %></td>
+                                    <% } %>
+                                </tr>
+                            <% }) %>
+                            <tr>
+                                <td colspan="<%= order.ReturnReason ? 10 : 9 %>" class="fs-4 fw-bold text-right">
+                                    Grand Total: ₹ <%= order.TotalPrice %> /-
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             <% } %>
         </div>
-        
     </div>
-    
-    
+           
         <!-- Bootstrap JavaScript (place at the end of the body) -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
         <style>
-            .card {
-                border-radius: 15px;
-                box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-                transition: 0.3s;
-                width: 300px;
-                margin: 15px;
-                text-align: center;
+            body {
+                background-color: #f8f9fa;
+                color: #495057;
             }
-        
-            .card img {
-                border-top-left-radius: 15px;
-                border-top-right-radius: 15px;
-                width: 100%;
-                height: 200px;
-                object-fit: cover;
+    
+            .table-responsive {
+                overflow-x: auto;
             }
-        
-            .card-body {
-                padding: 20px;
+    
+            .table thead th {
+                background-color: #e77d7d;
+                color: #fff;
+            }
+    
+            .table tbody tr:hover {
+                background-color: #e2e6ea;
             }
         </style>
     <script>

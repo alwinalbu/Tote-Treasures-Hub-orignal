@@ -1,97 +1,97 @@
-  /* Reset some default styles for better consistency */
-  body, html {
+
+body, html {
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif;
+    font-family: 'Open Sans', sans-serif;
 }
 
 .navbar {
-    background-color: black;
-    padding: 0;
-    border-bottom: 1px solid rgba(230, 174, 49);
+    background-color: #333;
+    padding:0;
+    border-bottom: 1px solid #e6ae31;
 }
 
 .navbar-brand h3 {
-    font-family: 'Italianno', cursive;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+    color: #fff;
 }
 
 .nav-link {
-    color: white;
-    font-family: 'Italianno', cursive;
-    font-size: 18px;
+    color: #fff;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
     font-weight: 700;
 }
 
 /* Change the color of the navigation links on hover */
 .navbar-nav .nav-item a:hover {
-    color: rgba(230, 174, 49);
+    color: #e6ae31;
 }
 
 /* Custom CSS to change the background color of the dropdown menu */
 .dropdown-menu {
-    background-color: white; /* Replace with your desired background color */
+    background-color: #fff;
 }
 
 /* Custom CSS to change the text color of links in the dropdown menu */
 .dropdown-menu a {
-    color: rgba(230, 174, 49); /* Replace with your desired text color */
-    font-family: 'Italianno', cursive;
+    color: #e6ae31;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
 }
 
-
-.style{
-    font-family: 'Italianno', cursive; 
+.style {
+    font-family: 'Open Sans', sans-serif;
 }
-
-
 
 .horizontal-timeline .items {
-border-top: 2px solid #ddd;
+    border-top: 2px solid #ddd;
 }
 
 .horizontal-timeline .items .items-list {
-position: relative;
-margin-right: 0;
+    position: relative;
+    margin-right: 0;
 }
 
 .horizontal-timeline .items .items-list:before {
-content: "";
-position: absolute;
-height: 8px;
-width: 8px;
-border-radius: 50%;
-background-color: #ddd;
-top: 0;
-margin-top: -5px;
+    content: "";
+    position: absolute;
+    height: 6px;
+    width: 6px;
+    border-radius: 50%;
+    background-color: #ddd;
+    top: 0;
+    margin-top: -3px;
 }
 
 .horizontal-timeline .items .items-list {
-padding-top: 15px;
-}
-.blue-text {
-color: green;
-}
-.modal-backdrop {
-background-color: rgba(0, 0, 0, 0.5) !important; 
+    padding-top: 8px;
 }
 
+.blue-text {
+    color: green;
+}
+
+.modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+}
 
 .order-item {
     border: 1px solid #ccc;
-   
-    border-radius: 0.5rem;
-   
-    padding: 1rem;
-    
-    margin-bottom: 0.5rem;
-    
+    border-radius: 0.3rem;
+    padding: 0.6rem;
+    margin-bottom: 0.3rem;
 }
 
 /* ------------------------------------cart----------------------------------- */
 
 @media (min-width: 1025px) {
     .h-custom {
-    height: 100vh !important;
+        height: 100vh !important;
     }
-    }
-    
+}
+
+

@@ -95,4 +95,25 @@ module.exports = {
       }
   
     },
+
+    getCategorybyId: async(req,res)=>{
+      try {
+        const categoryId = req.params._id;
+        console.log('category id inside click image is ',categoryId)
+        
+        const products= await Product.find({ Category: categoryId }).populate('offer');
+       
+        if (! products) {
+          
+          return res.status(404).send(' Products not found');
+        }
+    
+        
+        res.render('user/searchResults', { user: req.session.user ?? null, products});
+      } catch (error) {
+        
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+      }
+    },
 }

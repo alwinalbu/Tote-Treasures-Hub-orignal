@@ -67,10 +67,6 @@
                     <i class="fas fa-id-card me-2"></i>
                     <span>Coupons</span>
                 </a>
-                <a href="/admin/banners" class="list-group-item custom-list-item">
-                    <i class="fas fa-flag me-2"></i>
-                    <span>Banners</span>
-                </a>
                 <a href="/admin/brandpage" class="list-group-item custom-list-item">
                     <i class="fas fa-user-plus me-2"></i>
                     <span>Brands</span>
@@ -79,14 +75,23 @@
                     <i class="fas fa-list me-2"></i>
                     <span>Categories</span>
                 </a>
-                <a href="/admin/payments" class="list-group-item custom-list-item">
+                <a href="/admin/offers" class="list-group-item custom-list-item">
                     <i class="fas fa-money-bill me-2"></i>
-                    <span>Payments</span>
+                    <span>Offers</span>
                 </a>
             </ul>
         </div>
     </div>
     <div class="container-fluid">
+        <% if (messages.success) { %>
+            <div class="alert alert-success">
+                <%= messages.success %>
+            </div>
+        <% }else if (messages.error){ %>
+          <div class="alert alert-danger">
+            <%= messages.error %>
+        </div>
+        <%}%>
         <div class="d-flex justify-content-between align-items-center p-2">
             <div>
                 <input type="text" class="form-control" placeholder="Search">
@@ -99,7 +104,7 @@
                 <button class="btn btn-primary" id="addProduct">ADD Product</button>
             </a>
         </div>
-
+          
         <table class="table table-bordered table-hover mt-3">
             <thead class="table-dark">
                 <tr>
@@ -109,74 +114,63 @@
                     <th>Category</th>
                     <th>Image</th>
                     <th>Price</th>
-                    <th>Discount Amount</th>
+                    <th>Discount Price</th>
+                    <th>Offer Price</th>
                     <th>Available Quantity</th>
                     <th>Status</th>
                     <th>Action</th>
                 </tr>
             </thead>
-            <% products.forEach((product, index)=> { %>
-                <% if (product.Display==='Active' ) { %>
+            <% products.forEach((product, index) => { %>
+                <% if (product.Display === 'Active') { %>
                     <tbody>
-                <% } else if (product.Display==='Inactive' ) { %>
+                <% } else if (product.Display === 'Inactive') { %>
                     <tbody class="table-dark">
                 <% } %>
-                        <tr>
-                                <td>
-                                    <%= index + 1 %>
-                                </td>
-                                <td><a href="/admin/viewproductdetails/<%=product._id%>" class="text-secondary">
-                                        <%= product.ProductName %>
-                                    </a></td>
-                                <td>
-                                    <%= product.BrandName.Name %>
-                                </td>
-                                <td>
-                                    <%= product.Category.Name %>
-                                </td>
-                                <td>
-                                    <img src="/uploads/<%= product.images[0] %>" alt="Product Image"
-                                        style="max-width: 100px; height: auto;">
-                                </td>
-                                <td class="text-danger"><del>
-                                        <%= product.Price %>
-                                    </del></td>
-                                <td class="text-success">
-                                    <%= product.DiscountAmount %>
-                                </td>
-                                <td>
-                                    <%= product.AvailableQuantity %>
-                                </td>
-                                <td>
-                                    <% if (product.Display==='Active' ) { %>
-                                        <p class="text-success fw-bold">
-                                            <%= product.Display %>
-                                        </p>
-                                        <% } else if (product.Display==='Inactive' ) { %>
-                                            <p class="text-danger fw-bold">
-                                                <%= product.Display %>
-                                            </p>
-                                            <% } %>
-                                </td>
-                                <td>
-                                    <% if (product.Display==='Active' ) { %>
-                                        <a href="/admin/product/<%=product._id%>">
-                                            <button
-                                                onclick="return confirm(`Are you sure to block <%= product.ProductName %>??`)"
-                                                class="btn btn-success">Block</button>
-                                        </a>
-                                        <% } else if (product.Display==='Inactive' ) { %>
-                                            <a href="/admin/product/<%=product._id%>">
-                                                <button
-                                                    onclick="return confirm(`Are you sure. You are going to unblock the  <%= product.ProductName %>`)"
-                                                    class="btn btn-danger">Unblock</button>
-                                            </a>
-                                            <% } %>
-                                </td>
-                        </tr>
-                        <% }); %>
+                <tr>
+                    <td><%= index + 1 %></td>
+                    <td>
+                        <a href="/admin/viewproductdetails/<%= product._id %>" class="text-secondary">
+                            <%= product.ProductName %>
+                        </a>
+                    </td>
+                    <td><%= product.BrandName.Name %></td>
+                    <td><%= product.Category.Name %></td>
+                    <td>
+                        <img src="/uploads/<%= product.images[0] %>" alt="Product Image" style="max-width: 100px; height: auto;">
+                    </td>
+                    <td class="text-danger">
+                        <del><%= product.Price %></del>
+                    </td>
+                    <td class="text-success"><%= product.DiscountAmount %></td>
+                    <td>
+                        <%= product.IsInOffer ? (product.offerPrice || 'N/A') : 'N/A' %>
+                    </td>
+                    <td><%= product.AvailableQuantity %></td>
+                    <td>
+                        <% if (product.Display === 'Active') { %>
+                            <p class="text-success fw-bold"><%= product.Display %></p>
+                        <% } else if (product.Display === 'Inactive') { %>
+                            <p class="text-danger fw-bold"><%= product.Display %></p>
+                        <% } %>
+                    </td>
+                    <td>
+                        <% if (product.Display === 'Active') { %>
+                            <a href="/admin/product/<%= product._id %>">
+                                <button onclick="return confirm(`Are you sure to block <%= product.ProductName %>??`)" class="btn btn-success">Block</button>
+                            </a>
+                        <% } else if (product.Display === 'Inactive') { %>
+                            <a href="/admin/product/<%= product._id %>">
+                                <button onclick="return confirm(`Are you sure. You are going to unblock the <%= product.ProductName %>`) " class="btn btn-danger">Unblock</button>
+                            </a>
+                        <% } %>
+                    </td>
+                </tr>
+            <% }); %>
             </tbody>
         </table>
+        
+
         <% if (products.length > 0) { %>
             <nav aria-label="Page navigation example">
               <ul class="pagination justify-content-end">

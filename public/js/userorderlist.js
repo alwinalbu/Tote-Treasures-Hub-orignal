@@ -61,7 +61,7 @@ async function downloadInvoice(orderId) {
         clearInterval(timerInterval)
       }
     }).then((result) => {
-      /* Read more about handling dismissals below */
+      
       if (result.dismiss === Swal.DismissReason.timer) {
         console.log('I was closed by the timer')
       }
@@ -80,7 +80,7 @@ async function downloadInvoice(orderId) {
 
             window.location.href = `/download-invoice/${orderId}`;
         } else {
-            // If the response status is not within the range 200-299
+          
             throw new Error(`Failed to download invoice. Status: ${response.status}`);
         }
     } catch (error) {

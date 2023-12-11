@@ -10,8 +10,8 @@
         </a>
 
         <!-- Move the search form outside of the collapse button -->
-        <form class="d-flex" role="search">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+        <form class="d-flex" role="search" action="/search" method="GET">
+            <input class="form-control me-2" type="search" name="searchNames" placeholder="Search" aria-label="Search">
             <button class="btn btn-outline-success" type="submit">Search</button>
         </form>
 
@@ -31,8 +31,12 @@
                     <a class="nav-link" href="/wishlist">WishList <i class="fa-solid fa-heart text-danger"></i></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/cartpage">Cart <i class="fa-solid fa-cart-shopping text-primary"></i></a>
-                </li>
+                    <a class="nav-link" href="/cartpage">Cart <i class="fa-solid fa-cart-shopping text-primary"></i>
+                        <% if (cartCount > 0) { %>
+                        <span id="cart-quantity" class="badge bg-danger"><%= cartCount %></span>
+                     <% } %>
+                    </a>
+                 </li>
                 <li class="nav-item ml-auto"> <!-- Use ml-auto to push items to the right -->
                     <% if (user) { %>
                         <div class="dropdown">

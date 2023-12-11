@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="d-flex justify-content-center align-items-center">
+        <h1 style="font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">
+            Sales Report <%= `${startDate.toLocaleDateString('en-US').replace(/[/:]/g, '-')} to ${endDate.toLocaleDateString('en-US').replace(/[/:]/g, '-')}` %>
+          </h1>
+          
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>User Email ID</th>
+                <th>Order ID</th>
+                <th>Date</th>
+                <th>Total Amount</th>
+                <th>Payment Method</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% orders.forEach(order => { %>
+                <tr>
+                    <td><%= order.UserId.Email%></td>
+                    <td><%= order._id %></td>
+                    <td><%= order.OrderDate.toLocaleDateString() %></td>
+                    <td><%= order.TotalPrice.toFixed(2) %></td>
+                    <td><%= order.PaymentMethod %></td>
+                </tr>
+            <% }); %>
+        </tbody>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td style="font-weight: 600;">Total Sales : </td>
+            <td>Total Sales: ₹ <%= totalSales[0].totalSales.toLocaleString('en-IN', { style: 'currency', currency: 'INR' }) %></td>
+        </tr>
+    </table>
+</body>
+</html>

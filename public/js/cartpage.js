@@ -5,12 +5,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const decreaseButtons = document.querySelectorAll(".decrease-quantity");
   const removeButtons = document.querySelectorAll(".remove-button");
   const makePurchase = document.querySelector('#makePurchase')
+ 
 
   // --------------------------------stock Checking before checkout-----------------------------------
 
   makePurchase.addEventListener('click',(event)=>{
     event.preventDefault();
     checkStock();
+    
   })
 
   async function checkStock(){
@@ -78,6 +80,65 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
   
+  // ---------------------------coupen buttom----------------------------------------------------------
+
+  document.querySelector('.applyCoupon').addEventListener("click", function (e) {
+  
+    const couponDropdown = document.getElementById('couponDropdown');
+    const selectedCouponCode = couponDropdown.value;
+  
+    if (!selectedCouponCode) {
+      
+      return;
+    }
+  
+    const subTotal = document.getElementById("sub-total").textContent;
+    checkCoupon(selectedCouponCode, subTotal);
+  });
+  
+  
+  
+  async function checkCoupon(couponCode, subTotal) {
+    try {
+      const response = await fetch('/checkCoupon', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ code: couponCode, total: subTotal })
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          console.log("Coupon applied successfully HERE:", data);
+  
+          const discount = parseFloat(data.discount);
+          const discountCell = document.getElementById('discountCell');
+          discountCell.textContent = '- ₹' + discount.toFixed(2);
+          const newTotal = parseFloat(subTotal) - discount;
+          const totalAmountCell = document.getElementById('totalAmountCell');
+
+          totalAmountCell.value = newTotal.toFixed(2);
+  
+          Swal.fire('', 'Coupon Applied', 'success');
+        } else {
+          console.log("Coupon application failed:", data.error);
+          
+          Swal.fire({
+            title: 'Coupon Error',
+            text: data.error, 
+            icon: 'error',
+            confirmButtonText: 'OK', 
+          });
+          $('#flashMessage').text(data.error).show();
+        }
+      }
+    } catch (error) {
+      console.error('Error applying coupon:', error);
+    }
+  }
+  
   
 
   // ------------------------increase buttom----------------------------------------------------------
@@ -123,8 +184,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       
       }
-
+      
       updateQuantity(productId, -1);
+     
 
     });
 
@@ -159,41 +221,46 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // -----------------------function of total amount---------------------------------------
 
-  function updateTotalAmount() {
-
+  function updateTotalAmount(coupon) {
+    console.log("COUPON HERE is ", coupon);
     let totalAmount = 0;
 
     const productRows = document.querySelectorAll(".row.gy-3.mb-4");
 
     productRows.forEach((row) => {
-
-      const productId = row.querySelector(".decrease-quantity").getAttribute("data-product-id");
-
-      const quantityInput = row.querySelector(`#count_${productId}`);
-
-      const quantity = parseInt(row.querySelector(`#count_${productId}`).value, 10)
-
-      const productAmount = parseFloat(row.querySelector(`#productAmount_${productId}`).textContent);
-
-      totalAmount += productAmount;
-      
-      
-
+        const productId = row.querySelector(".decrease-quantity").getAttribute("data-product-id");
+        const productAmount = parseFloat(row.querySelector(`#productAmount_${productId}`).textContent);
+        totalAmount += productAmount;
     });
 
     const totalAmountCell = document.getElementById("totalAmountCell");
     const subTotal = document.getElementById("sub-total");
-    const hiddenTotalAmount = document.getElementById('hiddenTotalAmount');
+    const minAmountElement = document.getElementById("minAmount");
 
-    totalAmountCell.value = `${totalAmount.toFixed(2)}`;
+    if (coupon) {
+        const minAmountValue = parseFloat(minAmountElement.value);
+        console.log("minimum amount is", minAmountValue);
+        console.log("total amount is", totalAmount);
 
-    subTotal.textContent = `${totalAmount.toFixed(2)}`;
+        if (totalAmount < minAmountValue) {
+            const swalResult = Swal.fire({
+                icon: 'error',
+                title: 'Your coupon is lost',
+                text: `The minimum amount for your coupon is ${minAmountValue} rupees.`,
+                showConfirmButton: false,
+                toast: true,
+                position: 'center',
+                timer: 5000,
+                timerProgressBar: true,
+            });
+        } else {
+            totalAmount -= parseInt(coupon, 10);
+        }
+    }
 
-    hiddenTotalAmount.value = totalAmount.toFixed(2);
-
-
-  }
-
+    totalAmountCell.value = totalAmount.toFixed(2);
+    subTotal.textContent = totalAmount.toFixed(2);
+}
 
 
   //------------------------ Function to send AJAX request to update quantity------------------------
@@ -224,8 +291,8 @@ document.addEventListener("DOMContentLoaded", () => {
           quantityInput.value = data.newQuantity;
           productAmount.textContent = existingValue * data.newQuantity;
 
-          // Calculate and update the total amount
-          updateTotalAmount();
+          
+          updateTotalAmount(data.coupon);
         }
       } else {
         console.error("Error updating quantity:", response.statusText);
@@ -235,15 +302,9 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error('Error updating quantity:', error);
     }
   }
-
+  
   updateTotalAmount();
 
 });
-
-
-
-
-
-
 
 

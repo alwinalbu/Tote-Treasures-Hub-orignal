@@ -22,8 +22,7 @@
 
             <!-- Move the search form outside of the collapse button -->
             <form class="d-flex" role="search" action="/search" method="GET">
-                <input class="form-control me-2" type="search" name="searchTags" placeholder="Search"
-                    aria-label="Search">
+                <input class="form-control me-2" type="search" name="searchNames" placeholder="Search" aria-label="Search">
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
 
@@ -44,9 +43,12 @@
                                 class="fa-solid fa-heart text-danger"></i></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/cart">Cart <i
-                                class="fa-solid fa-cart-shopping text-primary"></i></a>
-                    </li>
+                        <a class="nav-link" href="/cartpage">Cart <i class="fa-solid fa-cart-shopping text-primary"></i>
+                            <% if (cartCount > 0) { %>
+                            <span id="cart-quantity" class="badge bg-danger"><%= cartCount %></span>
+                         <% } %>
+                        </a>
+                     </li>
                     <li class="nav-item ml-auto">
                         <% if (user) { %>
                         <div class="dropdown">
@@ -114,9 +116,7 @@
                 <td class="align-middle">₹<%= item.productId.DiscountAmount %></td>
                 <td class="align-right">
                     <div class="d-flex justify-content-between align-items-center">
-                        <a href="/addtocart/<%= item.productId._id %>"
-                            class="btn btn-light border text-success icon-hover-success add-to-cart-button">Add to
-                            Cart</a>
+                        <a href="/addtocart/<%=item.productId._id %>" class="btn btn-light border text-success icon-hover-success add-to-cart-button" id="addToCartButton">Add To Cart</a>
                         <a href="/removefromWishlist/<%= item.productId._id %>"
                             class="btn btn-light border text-danger icon-hover-danger remove-button">Remove</a>
                     </div>
@@ -144,6 +144,7 @@
     </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="/js/wishlist.js"></script>
+    <script src="/js/addtocart.js"></script>
 </body>
 
 </html>

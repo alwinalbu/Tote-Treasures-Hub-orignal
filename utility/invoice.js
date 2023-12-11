@@ -9,7 +9,7 @@ module.exports = {
 
         console.log('status for download is........ ',status);
         console.log('payment for download is ',paymentMethod);
-      // console.log(order, "utitlity");
+      
     var data = {
               
               "customize": {
@@ -34,12 +34,10 @@ module.exports = {
                   "company": order.Address.Name,
                   "address": order.Address.Address,
                   "zip":order.Address.Pincode ,
-                //   "zip": order.ShippedAddress.Pincode,
                   "city": order.Address.City,
                   "state":order.Address.State,
                   "Mob No":order.Address.Mobile,
-                //   "state": order.ShippedAddress.State,
-                //   "Mob No": order.ShippedAddress.Mobaile
+                
               },
               "information": {
                 "number": order._id,
@@ -52,7 +50,7 @@ module.exports = {
                   "quantity": product.Quantity,
                   "description": product.ProductId.ProductName, 
                   "tax-rate": 0,
-                  "price": product.ProductId.DiscountAmount
+                  "price": product.ProductId.offer ? product.ProductId.offerPrice : product.ProductId.DiscountAmount
               })),
   
               "bottom-notice": "Thank You For Your Purchase",

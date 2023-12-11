@@ -6,6 +6,7 @@ const categoryController=require("../controllers/categoryController")
 const productController=require("../controllers/productController")
 const orderController=require("../controllers/orderController")
 const couponController=require('../controllers/couponController')
+const offferController=require('../controllers/offferController')
 const upload = require('../middlewares/upload')
 const adminAuth=require('../middlewares/adminAuth')
 const Categories = require('../models/categorySchema')
@@ -22,7 +23,7 @@ router.route('/Login')
 // ---------------------------------------------------------------------------------------------------------------
 
 router.route("/dashboard")
-    .get(adminAuth.adminTokenAuth,adminController.getDashboard)
+.get(adminAuth.adminTokenAuth,adminController.getDashboard)
 
 router.route('/count-orders-by-day')
  .get(adminAuth.adminTokenAuth,adminController.getCount)
@@ -42,6 +43,10 @@ router.route('/monthly')
 
 router.route('/yearly')
 .get(adminAuth.adminTokenAuth,adminController.getYearlyBestSellingProducts)
+
+
+router.route('/downloadsalesreport')
+.post(adminAuth.adminTokenAuth,orderController.getDownloadSalesReport)
 
 
 
@@ -124,7 +129,7 @@ router.route('/order/updatestatus/:orderId')
 .put(adminAuth.adminTokenAuth,orderController.changeStatus)
 
 
-router.route('/admin/orders/acceptReturn/:orderId')
+router.route('/orders/acceptReturn/:orderId')
 .put(adminAuth.adminTokenAuth,orderController.acceptReturn)
 
 router.route('/orders/cancelReturn/:orderId')
@@ -134,6 +139,25 @@ router.route('/orders/cancelReturn/:orderId')
 
 router.route('/coupons')
 .get(adminAuth.adminTokenAuth,couponController.getCoupon)
+
+router.route('/addCoupon')
+.post(adminAuth.adminTokenAuth,couponController.AddCoupon)
+
+// router.route('/updateCoupon')
+// .put(adminAuth.adminTokenAuth,couponController.UpdateCoupon)
+
+// router.route('/deleteCoupon/:couponId')
+// .delete(adminAuth.adminTokenAuth,couponController.DeleteCoupon)
+
+
+// ----------------------------------------------------Offers---------------------------------------------------------
+
+router.route('/offers')
+.get(adminAuth.adminTokenAuth,offferController.getOffers)
+
+router.route('/addOffer')
+.post(adminAuth.adminTokenAuth,offferController.addOffers)
+
 
 
 

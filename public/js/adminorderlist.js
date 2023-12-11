@@ -65,6 +65,8 @@ function cancelReturn(orderId){
 function acceptReturn(orderId) {
   console.log("Reached inside the function on click Acceptance");
 
+  console.log("return ORDER ID IS :",orderId);
+
   fetch(`/admin/orders/acceptReturn/${orderId}`, {
     method: 'PUT',
     headers: {

@@ -1,4 +1,4 @@
-// Import the Razorpay SDK
+
 const Razorpay = require('razorpay')
 
 
@@ -21,7 +21,7 @@ module.exports = {
             const razorpayOrder = razorpay.orders.create({
                 amount: order.amount * 100, 
                 currency: 'INR',
-                receipt: order.receipt, // Unique identifier for the order
+                receipt: order.receipt, 
             });
 
             // Resolve the Promise with the created Razorpay order
@@ -29,3 +29,5 @@ module.exports = {
         });
     }
 };
+
+

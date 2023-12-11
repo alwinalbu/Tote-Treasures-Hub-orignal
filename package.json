@@ -14,14 +14,17 @@
     "bcrypt": "^5.1.1",
     "chart.js": "^4.4.0",
     "cookie-parser": "^1.4.6",
+    "cron": "^3.1.6",
     "crypto": "^1.0.1",
     "dotenv": "^16.3.1",
     "easyinvoice": "^3.0.25",
     "ejs": "^3.1.9",
+    "exceljs": "^4.4.0",
     "express": "^4.18.2",
     "express-flash": "^0.0.2",
     "express-session": "^1.17.3",
     "express-validator": "^7.0.1",
+    "html-pdf": "^3.0.1",
     "jsonwebtoken": "^9.0.2",
     "magnific-popup": "^1.1.0",
     "moment": "^2.29.4",
@@ -34,6 +37,8 @@
     "passport-google-oauth20": "^2.0.0",
     "razorpay": "^2.9.2",
     "sweet-alert": "^2.0.5",
+    "toastify-js": "^1.12.0",
+    "toastr": "^2.1.4",
     "validator": "^13.11.0"
   }
 }

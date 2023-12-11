@@ -42,9 +42,8 @@ app.set('view engine', 'ejs');
 
 app.use('/', userRouter);
 app.use('/admin', adminRouter);
+
 app.use("*", (req,res) => {
-  // req.session.user = false;
-  // res.clearCookie("userJwt")
   res.render('errorpage')
 })
 

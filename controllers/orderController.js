@@ -1,6 +1,9 @@
 const Order=require('../models/orderSchema')
 const Products=require('../models/productSchema')
 const User=require('../models/userSchema')
+const pdf=require('../utility/pdf')
+const excel=require('../utility/execl')
+const Wallet = require('../models/walletSchema')
 
 module.exports={
 
@@ -56,13 +59,12 @@ module.exports={
             { new: true }
           );
       
-          // Update PaymentStatus based on the status
           if (status.toLowerCase() === "delivered") {
             updatedOrder.PaymentStatus = "Paid";
           } else if (status.toLowerCase() === "rejected") {
             updatedOrder.PaymentStatus = "Order Rejected";
       
-            // If the order is rejected, update product quantities back to the database
+           
             for (const item of updatedOrder.Items) {
               const product = await Products.findById(item.ProductId);
               product.AvailableQuantity += item.Quantity;
@@ -115,7 +117,9 @@ cancelReturn: async (req,res)=>{
 acceptReturn: async (req, res) => {
   try {
     const orderId = req.params.orderId;
+    const userId = req.session.user.user;
 
+    console.log("User id is :",userId);
     console.log("REached inside the return ACCEPTANCE order id:",orderId);
 
     const updatedOrder = await Order.findByIdAndUpdate(
@@ -123,8 +127,14 @@ acceptReturn: async (req, res) => {
       { $set: { Status: 'Return Accepted' } },
       { new: true }
     );
+    
+    const TotalPrice=updatedOrder.TotalPrice
 
-    updatedOrder.PaymentStatus = "Refund Initiated";
+    console.log("User Return TOTAL PRICE is :",TotalPrice);
+
+    const wallet=await Wallet.findOneAndUpdate({UserID:userId},{$inc:{Amount:TotalPrice}})
+
+    updatedOrder.PaymentStatus = "Refund To Wallet";
 
     for (const item of updatedOrder.Items) {
       const product = await Products.findById(item.ProductId).exec(); 
@@ -143,5 +153,60 @@ acceptReturn: async (req, res) => {
     res.status(500).json({ success: false, error: 'Internal Server Error' });
   }
 },
+
+
+// --------------------------------Download sales report------------------------------------------------------------------
+
+getDownloadSalesReport: async (req, res) => {
+
+  console.log("reached inside of download sales report");
+
+  try {
+    const startDate = new Date(req.body.startDate);
+    const format = req.body.fileFormat;
+    const endDate = new Date(req.body.endDate);
+
+    const orders = await Order.find({
+      OrderDate: { $gte: startDate, $lte: endDate },
+      PaymentStatus: 'Paid',
+    })
+    .populate('Items.ProductId')
+    .populate('UserId'); // Adjusted this line
+    
+
+    const totalSales = await Order.aggregate([
+      {
+        $match: {
+          PaymentStatus:'Paid',
+          OrderDate: { $gte: startDate, $lte: endDate },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalSales: { $sum: '$TotalPrice' },
+        },
+      },
+    ]);
+
+    console.log("total sales is ", totalSales);
+
+    const sum = totalSales.length > 0 ? totalSales[0].totalSales : 0;
+
+    if (format === 'pdf') {
+      pdf.downloadPdf(req, res, orders, startDate, endDate, totalSales);
+    } else if (format === 'excel') {
+      excel.downloadExcel(req, res, orders, startDate, endDate, totalSales);
+    } else {
+      
+      res.status(400).json({ error: 'Unsupported file format' });
+    }
+  } catch (error) {
+    console.log(error);
+    
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+},
+
 
 }

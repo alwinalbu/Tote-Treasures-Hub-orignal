@@ -110,36 +110,69 @@
                 <table class="table">
                     <tr>
                         <td>Product Name</td>
-                        <th><%= product.ProductName %></th>
+                        <th>
+                            <%= product.ProductName %>
+                        </th>
                     </tr>
                     <tr>
                         <td>Description</td>
-                        <th><%= product.Description %></th>
+                        <th>
+                            <%= product.Description %>
+                        </th>
                     </tr>
                     <tr>
                         <td>Specification</td>
-                        <th><%= product.Specification1%></th>
+                        <th>
+                            <%= product.Specification1%>
+                        </th>
                     </tr>
                     <tr>
                         <td>Brand</td>
-                        <th><%= product.BrandName.Name %></th>
+                        <th>
+                            <%= product.BrandName.Name %>
+                        </th>
                     </tr>
                     <tr>
                         <td>Category</td>
-                        <th><%= product.Category.Name %></th>
+                        <th>
+                            <%= product.Category.Name %>
+                        </th>
                     </tr>
                     <tr>
                         <td>Price</td>
-                        <th class="text-danger"><del><%= product.Price %></del></th>
+                        <th class="text-danger"><del>
+                                <%= product.Price %>
+                            </del></th>
                     </tr>
+                    <% if(product.offerPrice){ %>
                     <tr>
-                        <td> DiscountAmount</td>
-                        <th class="text-success"><%= product.DiscountAmount%></th>
+                        <td> Discount Price</td>
+                        <th class="text-danger"><del>
+                            <%= product.DiscountAmount%>
+                        </del></th>
                     </tr>
+                 <% } else { %>
+                    <tr>
+                        <td> Discount Price</td>
+                        <th class="text-success">
+                            <%= product.DiscountAmount%>
+                        </th>
+                    </tr>
+                <% }%>
                     <tr>
                         <td>Stock</td>
-                        <th><%= product.AvailableQuantity %></th>
+                        <th>
+                            <%= product.AvailableQuantity %>
+                        </th>
                     </tr>
+                    <% if(product.offerPrice) { %>
+                    <tr>
+                        <td>Offer Price</td>
+                        <th class="text-success">
+                            <%= product.offerPrice %>
+                        </th>
+                    </tr>
+                <%}%>
                 </table>
                 <div class="d-flex justify-content-around my-3">
                     <a href="/admin/editproduct/<%=product._id%>" class="btn btn-success">Edit</a>

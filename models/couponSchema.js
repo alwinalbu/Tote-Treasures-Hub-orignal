@@ -9,11 +9,6 @@ const couponSchema = new mongoose.Schema({
     unique: true,
     required: true
   },
-  discount_type: {
-    type: String,
-    enum:'fixed', 
-    required: true
-  },
   discount_amount: {
     type: Number,
     required: true
@@ -22,9 +17,17 @@ const couponSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  startDate:{
+    type: Date,
+    required: true
+  },
   expiration_date: {
     type: Date,
     required: true
+  },
+  Status:{
+    type: String,
+    default : "Active"
   },
   usedBy: [
     {
@@ -35,11 +38,6 @@ const couponSchema = new mongoose.Schema({
       couponCode: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Coupon'
-      },
-      status: {
-        type: String,
-        enum: ['used', 'expired'],
-        default: 'used'
       }
     }
   ]

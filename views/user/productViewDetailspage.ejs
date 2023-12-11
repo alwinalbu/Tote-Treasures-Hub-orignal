@@ -11,6 +11,9 @@
     <link rel="stylesheet" type="text/css" href="/css/landingpage.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastr@2.1.4/dist/toastr.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    
 </head>
 
 <body>
@@ -22,8 +25,8 @@
             </a>
 
             <!-- Move the search form outside of the collapse button -->
-            <form class="d-flex" role="search">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <form class="d-flex" role="search" action="/search" method="GET">
+                <input class="form-control me-2" type="search" name="searchNames" placeholder="Search" aria-label="Search">
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
 
@@ -43,8 +46,12 @@
                         <a class="nav-link" href="/wishlist">WishList <i class="fa-solid fa-heart text-danger"></i></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/cart">Cart <i class="fa-solid fa-cart-shopping text-primary"></i></a>
-                    </li>
+                        <a class="nav-link" href="/cartpage">Cart <i class="fa-solid fa-cart-shopping text-primary"></i>
+                            <% if (cartCount > 0) { %>
+                            <span id="cart-quantity" class="badge bg-danger"><%= cartCount %></span>
+                         <% } %>
+                        </a>
+                     </li>
                     <li class="nav-item ml-auto"> <!-- Use ml-auto to push items to the right -->
                         <% if (user) { %>
                             <div class="dropdown">
@@ -102,6 +109,15 @@
             </div>
 
             <div class="col-lg-6 col-md-8 col-sm-10 col-12">
+                <% if (messages.success) { %>
+                    <div class="alert alert-success">
+                        <%= messages.success %>
+                    </div>
+                    <% }else if (messages.error){ %>
+                        <div class="alert alert-danger">
+                            <%= messages.error %>
+                        </div>
+                        <%}%>
                 <table class="table">
                     <tr>
                         <td>Product Name</td>
@@ -139,18 +155,35 @@
                                 <%= product.Price %>
                             </del></th>
                     </tr>
+                    <% if(product.offerPrice){ %>
                     <tr>
-                        <td> DiscountAmount</td>
+                        <td> Discount Price</td>
+                        <th class="text-danger"><del>
+                            <%= product.DiscountAmount%>
+                        </del></th>
+                    </tr>
+                 <% } else { %>
+                    <tr>
+                        <td> Discount Price</td>
                         <th class="text-success">
                             <%= product.DiscountAmount%>
                         </th>
                     </tr>
+                <% }%>
                     <tr>
                         <td>Stock</td>
                         <th>
                             <%= product.AvailableQuantity %>
                         </th>
                     </tr>
+                    <% if(product.offerPrice) { %>
+                    <tr>
+                        <td>Offer Price</td>
+                        <th class="text-success">
+                            <%= product.offerPrice %>
+                        </th>
+                    </tr>
+                <%}%>
                 </table>
                 <div class="d-flex justify-content-around my-3">
                     <!-- Wishlist Button -->
@@ -167,25 +200,18 @@
                             <i class="fa-heart fa-regular fa-lg px-1 text-secondary"></i>
                         <% } %>
                     </a>
-                    
-                   
-                
-                    <!-- Add to Cart Button -->
-                    <a href="/addtocart/<%= product._id %>" class="btn btn-warning">Add To Cart</a>
-                </div>
-                
+                <a href="/addtocart/<%= product._id %>" class="btn btn-warning" id="addToCartButton">Add To Cart</a>
+                </div>  
             </div>
         </div>
     </div>
 
 
-   <!-- Include jQuery from CDN -->
+
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
-<!-- Include Magnific Popup JS from CDN -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
-    
-    <!-- Initialize Magnific Popup -->
+      
     <script>
         $(document).ready(function() {
             $('.magnific-popup').magnificPopup({
@@ -195,11 +221,11 @@
                 },
                 callbacks: {
                     open: function() {
-                        // Add zoom effect on mouseover
+                       
                         $('.mfp-figure').addClass('mfp-zoom-in');
                     },
                     beforeClose: function() {
-                        // Remove zoom effect on mouseout
+                      
                         $('.mfp-figure').removeClass('mfp-zoom-in');
                     }
                 }
@@ -207,10 +233,9 @@
         });
     </script>
     
-    <!-- Include additional CSS for zoom effect -->
     <style>
         .mfp-zoom-in .mfp-img {
-            transform: scale(1.3); /* Adjust the scale factor as needed */
+            transform: scale(1.3); 
             transition: transform 0.6s ease-in-out;
         }
     
@@ -224,7 +249,10 @@
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script src="/js/wishlist.js"></script>
+<script src="/js/addtocart.js"></script>
+
 
 </body>
 

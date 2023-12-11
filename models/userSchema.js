@@ -5,7 +5,6 @@ const { Schema, ObjectId  } = mongoose;
 const UserSchema = new Schema({
     Username: {
         type: String,
-        uppercase: true,
         required: true
     },
     Email: {
@@ -20,6 +19,16 @@ const UserSchema = new Schema({
         type: String,
         default: 'Active'
     },
+    ReferralCode: {
+        type: String,
+        unique: true
+      },
+      ReferrerID: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+      },
+      Referrals: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+      
     Address: [{
         Name: {
             type: String

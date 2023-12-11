@@ -1,44 +1,46 @@
-/* Updated CSS */
 
-/* Reset some default styles for better consistency */
 body, html {
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif;
+    font-family: 'Open Sans', sans-serif;
 }
 
-/* Header styles */
 .navbar {
-    background-color: black;
-    padding: 0;
-    border-bottom: 1px solid rgba(230, 174, 49);
+    background-color: #333;
+    padding:0;
+    border-bottom: 1px solid #e6ae31;
 }
 
 .navbar-brand h3 {
-    font-family: Italianno;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+    color: #fff;
 }
 
 .nav-link {
-    color: white;
-    font-family: Italianno;
-    font-size: 18px;
+    color: #fff;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
     font-weight: 700;
 }
 
 /* Change the color of the navigation links on hover */
 .navbar-nav .nav-item a:hover {
-    color: rgba(230, 174, 49);
+    color: #e6ae31;
 }
 
 /* Custom CSS to change the background color of the dropdown menu */
 .dropdown-menu {
-    background-color: white; /* Replace with your desired background color */
+    background-color: #fff;
 }
 
 /* Custom CSS to change the text color of links in the dropdown menu */
 .dropdown-menu a {
-    color: rgba(230, 174, 49); /* Replace with your desired text color */
-    font-family: Italianno;
+    color: #e6ae31;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
 }
 
 /* Center the content vertically and horizontally */
@@ -56,11 +58,11 @@ body, html {
     box-shadow: 0px 0px 10px rgba(230, 174, 49);
     border-radius: 5px;
     padding: 20px;
-    width: 90%; /* Adjust the width for default laptop-sized screens */
-    max-width: 400px; /* Set a maximum width for larger screens */
+    width: 90%; 
+    max-width: 400px; 
     text-align: center;
-    height: auto; /* Allow the form height to adjust to content */
-    margin: 20px; /* Add margin to separate the form from the edges */
+    height: auto; 
+    margin: 20px; 
 }
 
 .login-form h2 {

@@ -2,23 +2,24 @@
 body, html {
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif;
+    font-family: 'Open Sans', sans-serif;
 }
 
 .navbar {
     background-color: black;
-    padding: 0;
+    padding: 10px 0;
     border-bottom: 1px solid rgba(230, 174, 49);
 }
 
 .navbar-brand h3 {
-    font-family: Italianno;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 18px;
 }
 
 .nav-link {
     color: white;
-    font-family: Italianno;
-    font-size: 24px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 16px;
     font-weight: 700;
 }
 
@@ -35,5 +36,21 @@ body, html {
 /* Custom CSS to change the text color of links in the dropdown menu */
 .dropdown-menu a {
     color: rgba(230, 174, 49); /* Replace with your desired text color */
-    font-family: Italianno;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+}
+
+/* Responsive Font Sizes */
+@media (max-width: 768px) {
+    .navbar-brand h3 {
+        font-size: 16px;
+    }
+
+    .nav-link {
+        font-size: 14px;
+    }
+
+    .dropdown-menu a {
+        font-size: 14px;
+    }
 }

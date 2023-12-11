@@ -1,7 +1,7 @@
 $(document).ready(function () {
-    // Attach a click event handler to the change password button
+   
     $("#changePasswordButton").click(() => {
-        // Use SweetAlert to confirm the action
+   
         Swal.fire({
             title: 'Are you sure?',
             text: 'Do you really want to change your password?',
@@ -12,30 +12,27 @@ $(document).ready(function () {
             confirmButtonText: 'Yes, change it!'
         }).then((result) => {
             if (result.isConfirmed) {
-                // If the user clicks "Yes" in the SweetAlert, show the modal
+               
                 $('#changePasswordModal').modal('show');
             } else {
-                // Optionally, show another SweetAlert or handle the cancellation
+                
                 Swal.fire('Password change canceled!', '', 'info');
             }
         });
     });
 
-    // Show the modal
     $('#changePasswordModal').on('shown.bs.modal', function () {
-        // Submit the form when the modal is fully shown
+ 
         $("#passwordChangeForm").submit(submitPasswordChangeForm);
     });
 });
 
-// Function to submit the password change form via AJAX
+
 function submitPasswordChangeForm(e) {
-    // Prevent form submission
+
     e.preventDefault();
 
     console.log('Form submitted!');
-
-    // Perform AJAX request
     $.ajax({
         url: '/changepassword',
         method: 'post',
@@ -43,12 +40,9 @@ function submitPasswordChangeForm(e) {
         success: (response) => {
             if (response.success) {
                 console.log('Password changed successfully');
-
-                // Close the modal after changed successfully
                 
                 $('#changePasswordModal').modal('hide');
-
-                // Useing SweetAlert for success message
+       
                 Swal.fire({
                     title: 'Success!',
                     text: 'Password changed successfully',

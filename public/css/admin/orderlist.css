@@ -1,0 +1,113 @@
+
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.navbar {
+    background-color: #333;
+    padding:0;
+    border-bottom: 1px solid #e6ae31;
+}
+
+.navbar-brand h3 {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+    color: #fff;
+}
+
+.nav-link {
+    color: #fff;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+/* Change the color of the navigation links on hover */
+.navbar-nav .nav-item a:hover {
+    color: #e6ae31;
+}
+
+/* Custom CSS to change the background color of the dropdown menu */
+.dropdown-menu {
+    background-color: #fff;
+}
+
+/* Custom CSS to change the text color of links in the dropdown menu */
+.dropdown-menu a {
+    color: #e6ae31;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+}
+
+.style {
+    font-family: 'Open Sans', sans-serif;
+}
+
+.horizontal-timeline .items {
+    border-top: 2px solid #ddd;
+}
+
+.horizontal-timeline .items .items-list {
+    position: relative;
+    margin-right: 0;
+}
+
+.horizontal-timeline .items .items-list:before {
+    content: "";
+    position: absolute;
+    height: 6px;
+    width: 6px;
+    border-radius: 50%;
+    background-color: #ddd;
+    top: 0;
+    margin-top: -3px;
+}
+
+.horizontal-timeline .items .items-list {
+    padding-top: 8px;
+}
+
+.blue-text {
+    color: green;
+}
+
+.modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+.order-item {
+    border: 1px solid #ccc;
+    border-radius: 0.3rem;
+    padding: 0.6rem;
+    margin-bottom: 0.3rem;
+}
+
+
+.offcanvas {
+    background-image: linear-gradient(to right, rgb(19, 2, 31), rgb(213, 236, 129));
+    width: 250px;
+  }
+  
+  /* Offcanvas header styles */
+  .offcanvas-header {
+    color: white;
+  }
+  
+  .offcanvas-title {
+    font-size: 20px;
+    padding: 10px;
+  }
+
+/* ------------------------------------cart----------------------------------- */
+
+@media (min-width: 1025px) {
+    .h-custom {
+        height: 100vh !important;
+    }
+}
+
+

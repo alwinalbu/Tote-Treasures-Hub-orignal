@@ -42,8 +42,12 @@
                         <a class="nav-link" href="/wishlist">WishList <i class="fa-solid fa-heart text-danger"></i></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/cart">Cart <i class="fa-solid fa-cart-shopping text-primary"></i></a>
-                    </li>
+                        <a class="nav-link" href="/cartpage">Cart <i class="fa-solid fa-cart-shopping text-primary"></i>
+                            <% if (cartCount > 0) { %>
+                            <span id="cart-quantity" class="badge bg-danger"><%= cartCount %></span>
+                         <% } %>
+                        </a>
+                     </li>
                     <li class="nav-item ml-auto"> <!-- Use ml-auto to push items to the right -->
                         <% if (user) { %>
                             <div class="dropdown">

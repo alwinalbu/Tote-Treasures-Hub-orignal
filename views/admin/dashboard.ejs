@@ -65,10 +65,6 @@
                     <i class="fas fa-id-card me-2"></i>
                     <span>Coupons</span>
                 </a>
-                <a href="/admin/banners" class="list-group-item custom-list-item">
-                    <i class="fas fa-flag me-2"></i>
-                    <span>Banners</span>
-                </a>
                 <a href="/admin/brandpage" class="list-group-item custom-list-item">
                     <i class="fas fa-user-plus me-2"></i>
                     <span>Brands</span>
@@ -77,15 +73,61 @@
                     <i class="fas fa-list me-2"></i>
                     <span>Categories</span>
                 </a>
-                <a href="/admin/payments" class="list-group-item custom-list-item">
+                <a href="/admin/offers" class="list-group-item custom-list-item">
                     <i class="fas fa-money-bill me-2"></i>
-                    <span>Payments</span>
+                    <span>Offers</span>
                 </a>
             </ul>
         </div>
     </div>
-
+    <div class="modal" id="salesReportModal" tabindex="-1" role="dialog" aria-labelledby="salesReportModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="salesReportModalLabel">Sales Report</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form id="salesReport" method="post" action="/admin/downloadsalesreport">
+                <div class="">
+                  <label for="startDate">Start Date:</label>
+                  <input type="date" name="startDate" class="form-control" id="startDate" required>
+                </div>
+                <div class="">
+                  <label for="endDate">End Date:</label>
+                  <input type="date" name="endDate" class="form-control" id="endDate" required>
+                </div>
+                <div class="">
+                    <label>File Format:</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="fileFormat" id="pdf" value="pdf" checked>
+                        <label class="form-check-label" for="pdf">
+                            PDF
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="fileFormat" id="excel" value="excel">
+                        <label class="form-check-label" for="excel">
+                            Excel
+                        </label>
+                    </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" data-bs-dismiss="modal" class="btn btn-primary">Download</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
     <div class="container mt-4">
+        <div class="text-end">
+            <button class="btn btn-outline-info me-2" data-bs-toggle="modal" data-bs-target="#salesReportModal">Sales Report</button>
+        </div>
+        <br>
         <div class="row">
             <div class="col-lg-12">
                 <div class="card mb-4"
@@ -105,10 +147,10 @@
                                 </ul>
                             </div>
                             <div class="col-lg-6">
-                                <canvas id="salesGraphAmount"></canvas>
+                                <canvas id="pieSalesGraph"></canvas>
                             </div>
                             <div class="col-lg-6">
-                                <canvas id="salesGraphCount"></canvas>
+                                <canvas id="lineSalesGraph"></canvas>
                             </div>
                         </div>
                     </div>

@@ -7,7 +7,7 @@ module.exports = {
             const userId = req.session.user.user;
 
             const user = await User.findOne({ _id: userId }).populate('Wishlist.productId');
-
+            
             res.render("user/wishlist", { wishlist: user.Wishlist, user });
         } catch (error) {
             console.error(error);

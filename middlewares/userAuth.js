@@ -27,6 +27,7 @@ module.exports = {
         if (token) {
             jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
                 if (err) {
+                    console.log("jwt token error insside")
                     next();
                 }
                 else {

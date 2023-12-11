@@ -83,9 +83,13 @@ module.exports = {
     deleteBrand: async(req, res) => {
       try {
         const id = req.params.id;
-        console.log("Route accessed: /admin/deleteBrand/" + id); // Debug line
+
+        console.log("Route accessed: /admin/deleteBrand/" + id); 
+
         console.log("id is :",id)
+
         await Brand.findByIdAndRemove(id);
+        
         res.redirect("/admin/brandpage");
       } catch (error) {
         console.log("eror inside")

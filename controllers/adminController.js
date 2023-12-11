@@ -46,6 +46,7 @@ module.exports = {
             console.log(req.body.Email);
             const Password = req.body.Password;
             const admin = await Admin.findOne({ Email: Email });
+            console.log(Email);
             console.log(admin);
     
             if (admin.Status === "Active") {
@@ -83,7 +84,7 @@ module.exports = {
       const adminName = req.session.admin.Name;
   
       try {
-          // Fetch latest orders with populated UserId and Items
+         
           const latestOrders = await Order.find()
               .sort({ OrderDate: -1 })
               .limit(5)
@@ -97,7 +98,7 @@ module.exports = {
                   select: 'ProductName',
               });
   
-          // Fetch frequent users (those with the most orders)
+          
           const frequentUsers = await User.aggregate([
               {
                   $lookup: {
@@ -146,13 +147,17 @@ getCount: async (req, res) => {
       let labelsByAmount;
       let dataByCount;
       let dataByAmount;
-      console.log('outside')
+      console.log('outside order day graph')
+
       orders.forEach((order) => {
-        console.log(order,'inside')
+
+        console.log(order,'inside order day ')
+
         const orderDate = moment(order.OrderDate, "ddd, MMM D, YYYY h:mm A");
         const dayMonthYear = orderDate.format("YYYY-MM-DD");
         const monthYear = orderDate.format("YYYY-MM");
         const year = orderDate.format("YYYY");
+        
         console.log("order date is :",orderDate);
         
         if (req.url === "/count-orders-by-day") {
@@ -251,7 +256,6 @@ getCount: async (req, res) => {
         }
       });
 
-
       res.json({ labelsByCount,labelsByAmount, dataByCount, dataByAmount });
     } catch (err) {
       console.error(err);
@@ -285,43 +289,37 @@ getCount: async (req, res) => {
 
       blockUser: async (req, res) => {
         try {
-          // Extract the _id parameter from the request's URL
-          const _id = req.params._id;
           
-          // Find a user in the database based on the extracted _id
+          const _id = req.params._id;
+         
           const userData = await User.findOne({ _id: _id });
           
-          // Log the user data to the console
           console.log(userData);
-      
-          // Check if the user's status is "Active"
+  
           if (userData.Status === "Active") {
-            // If the user is active, update their status to "Blocked"
+           
             const user = await User.findByIdAndUpdate(_id, { Status: "Blocked" });
             const alertMessage = "This user is being blocked";
-            
-            // Set an alert message in the session for later use
+             
             req.session.alert = alertMessage;
-            
-            // Redirect the user to the "/admin/userslist" page
+         
             res.redirect("/admin/userslist");
+
           } else if (userData.Status === "Blocked") {
-            // If the user is blocked, update their status to "Active"
+            
             const user = await User.findByIdAndUpdate(_id, { Status: "Active" });
             const alertMessage = "This user is being unblocked";
-            
-            // Set an alert message in the session for later use
+      
+
             req.session.alert = alertMessage;
-            
-            // Redirect the user to the "/admin/userslist" page
             res.redirect("/admin/userslist");
           }
         } catch (error) {
-          // In case of an error, set a generic alert message
+          
           const alertMessage = "This is an alert message.";
           req.session.alert = alertMessage;
           
-          // Redirect the user to the "/admin/userslist" page
+         
           res.redirect("/admin/userslist");
         }
       },
@@ -352,7 +350,7 @@ getBestSellingProducts: async (req, res) => {
               $sort: { totalSold: -1 },
           },
           {
-              $limit: 5, // Adjust the limit based on the number of top products you want to retrieve
+              $limit: 5,
           },
           {
               $lookup: {

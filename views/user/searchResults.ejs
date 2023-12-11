@@ -22,7 +22,7 @@
 
             <!-- Move the search form outside of the collapse button -->
             <form class="d-flex" role="search" action="/search" method="GET">
-                <input class="form-control me-2" type="search" name="searchTags" placeholder="Search" aria-label="Search">
+                <input class="form-control me-2" type="search" name="searchNames" placeholder="Search" aria-label="Search">
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
 
@@ -42,8 +42,12 @@
                         <a class="nav-link" href="/wishlist">WishList  <i class="fa-solid fa-heart text-danger"></i></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/cart">Cart <i class="fa-solid fa-cart-shopping text-primary"></i></a>
-                    </li>
+                        <a class="nav-link" href="/cartpage">Cart <i class="fa-solid fa-cart-shopping text-primary"></i>
+                            <% if (cartCount > 0) { %>
+                            <span id="cart-quantity" class="badge bg-danger"><%= cartCount %></span>
+                         <% } %>
+                        </a>
+                     </li>
                     <li class="nav-item ml-auto"> <!-- Use ml-auto to push items to the right -->
                         <% if (user) { %>
                             <div class="dropdown">
@@ -92,25 +96,41 @@
                     <% } else { %>
                         <% products.forEach(function(product) { %>
                             <div class="col-lg-4 col-xl-3 col-sm-6 mb-4 equal-width">
-                                <div class="card">
-                                    <img src="/uploads/<%= product.images[0] %>" class="card-img-top" style="height: 40vh;" alt="">
-                                    <div class="card-body d-flex flex-column justify-content-between" style="height: 30vh;">
-                                        <h5 class="card-title text-center" style="height: 20px; overflow: hidden;">
-                                            <%= product.ProductName %>
-                                        </h5>
-                                        <div class="d-flex flex-column justify-content-center">
-                                            <% if (product.AvailableQuantity === 0) { %>
-                                                <div style="background-color: red;">
-                                                    <p class="card-text text-center text-light">Out of Stock</p>
-                                                </div>
-                                            <% } else { %>
-                                                <p class="card-text text-center text-danger"><del> ₹<%= product.Price %></del></p>
-                                                <p class="card-text text-center text-success">DiscountAmount ₹<%= product.DiscountAmount %></p>
-                                                <a href="/productViewDetailspage/<%= product._id %>" class="btn btn-primary text-center">View Details</a>
-                                            <% } %>
-                                        </div>
-                                    </div>
-                                </div>
+                                <div class="card position-relative">
+                                  <% if (product.offer) { %>
+                                      <span class="badge badge-danger badge-circle position-absolute" style="top: 0; left: 0;">
+                                          Offer: <%= product.offer.percentage %>%
+                                      </span>
+                                  <% } %>
+                                  <img src="/uploads/<%= product.images[0] %>" class="card-img-top" style="height: 40vh;" alt="">
+                                  <div class="card-body d-flex flex-column justify-content-between" style="height: 30vh;">
+                                      <h5 class="card-title text-center" style="height: 20px; overflow: hidden;">
+                                          <%= product.ProductName %>
+                                      </h5>
+                                      <div class="d-flex flex-column justify-content-center">
+                                          <% if (product.AvailableQuantity === 0) { %>
+                                              <div style="background-color: red;">
+                                                  <p class="card-text text-center text-light">Out of Stock</p>
+                                              </div>
+                                          <% } else if (product.offer) { %>
+                                              <p class="card-text text-center text-danger">
+                                                  <del> ₹<%= product.Price %></del>
+                                              </p>
+                                              <p class="card-text text-center text-danger">
+                                                  <del> ₹<%= product.DiscountAmount %></del>
+                                                  <span class="text-success"> Offer Price ₹<%= product.offerPrice %></span>
+                                              </p>                                            
+                                              <a href="/productViewDetailspage/<%= product._id %>" class="btn btn-primary text-center">View Details</a>
+                                          <% } else { %>
+                                              <p class="card-text text-center text-danger">
+                                                  <del> ₹<%= product.Price %></del>
+                                              </p>
+                                              <p class="card-text text-center text-success">Discount Price ₹<%= product.DiscountAmount %></p>
+                                              <a href="/productViewDetailspage/<%= product._id %>" class="btn btn-primary text-center">View Details</a>
+                                          <% } %>  
+                                      </div>
+                                  </div>
+                              </div>
                             </div>
                         <% }); %>
                     <% } %>
@@ -118,6 +138,21 @@
             </div>
         </div>
     </section>
+    <style>
+        .card {
+          border: 1px solid #dee2e6;
+          border-radius: 8px;
+          overflow: hidden;
+        }
+      
+        .badge-danger {
+          background-color: #d61629;
+        }
+      
+        .badge-circle {
+          border-radius: 100%;
+        }
+      </style>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"

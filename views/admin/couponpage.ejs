@@ -63,10 +63,6 @@
                     <i class="fas fa-id-card me-2"></i>
                     <span>Coupons</span>
                 </a>
-                <a href="/admin/banners" class="list-group-item custom-list-item">
-                    <i class="fas fa-flag me-2"></i>
-                    <span>Banners</span>
-                </a>
                 <a href="/admin/brandpage" class="list-group-item custom-list-item">
                     <i class="fas fa-user-plus me-2"></i>
                     <span>Brands</span>
@@ -75,9 +71,9 @@
                     <i class="fas fa-list me-2"></i>
                     <span>Categories</span>
                 </a>
-                <a href="/admin/payments" class="list-group-item custom-list-item">
+                <a href="/admin/offers" class="list-group-item custom-list-item">
                     <i class="fas fa-money-bill me-2"></i>
-                    <span>Payments</span>
+                    <span>Offers</span>
                 </a>
             </ul>
         </div>
@@ -94,33 +90,34 @@
               </div>
               <!-- Modal Body -->
               <div class="modal-body">
-                  <!-- Your form to add a new coupon goes here -->
+                
                   <form id="addCouponForm">
-                      <div class="form-group">
+                    <div id="flashMessage" class="alert alert-danger"style="display: none"></div>
+                      <div class="">
                           <label for="couponName">Coupon Name:</label>
-                          <input type="text" class="form-control" id="couponName" required>
+                          <input type="text" class="form-control" id="couponName" name="couponName" required>
                       </div>
-                      <div class="form-group">
+                      <div class="">
                           <label for="code">Coupon Code:</label>
-                          <input type="text" class="form-control" id="code" required>
+                          <input type="text" class="form-control" id="code" name="code" required>
                       </div>
-                      <div class="form-group">
-                          <label for="discountType">Discount Type:</label>
-                          <select class="form-control" id="discountType" required>
-                              <option value="fixed">Fixed Amount</option>
-                          </select>
-                      </div>
-                      <div class="form-group">
+   
+                      <div class="">
                           <label for="discountAmount">Discount Amount:</label>
-                          <input type="number" class="form-control" id="discountAmount" required>
+                          <input type="number" class="form-control" id="discountAmount" name="discount_amount" required>
                       </div>
-                      <div class="form-group">
+                      <div class="">
                           <label for="minimumPurchase">Minimum Purchase:</label>
-                          <input type="number" class="form-control" id="minimumPurchase" required>
+                          <input type="number" class="form-control" id="minimumPurchase" name="minimum_purchase" required>
                       </div>
-                      <div class="form-group">
+                      <div class="">
+                        <label for="startDate"> Start Date:</label>
+                        <input type="date" class="form-control" id="startDate" placeholder="Select the date for Start of coupon" name="startDate" required />
+                        <span id="dateError" style="color: red;"></span>
+                    </div>
+                      <div class="">
                           <label for="expirationDate">Expiration Date:</label>
-                          <input type="date" class="form-control" id="expirationDate" placeholder="Select the date for Expiration of coupon" required />
+                          <input type="date" class="form-control" id="expirationDate" placeholder="Select the date for Expiration of coupon" name="expiration_date" required />
                           <span id="dateError" style="color: red;"></span>
                       </div>
                       <button type="submit" class="btn btn-primary">Add Coupon</button>
@@ -129,22 +126,94 @@
           </div>
       </div>
   </div>
+  <% coupons.forEach(function(coupon ) { %>
+    <div class="modal" id="editModal_<%= coupon._id %>" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editModalLabel">Edit Coupon</h5>
+            <button type="button" class="btn-close btn-info" data-bs-dismiss="modal" aria-label="Close"></button>
+            <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+           
+            <form id="editCouponForm">
+              <div id="editFlashMessage" class="alert alert-danger" style="display: none"></div>
+  
+              <input type="hidden" id="editCouponId" name="couponId" value="<%= coupon._id %>">
+  
+              <div class="">
+                <label for="editCouponName">Coupon Name:</label>
+                <input type="text" class="form-control" id="editCouponName" name="couponName" value="<%= coupon.couponName %>" required>
+              </div>
+  
+              <div class="">
+                <label for="editCode">Coupon Code:</label>
+                <input type="text" class="form-control" id="editCode" name="code" value="<%= coupon.code %>" required>
+              </div>
+  
+              <div class="">
+                <label for="editDiscountAmount">Discount Amount:</label>
+                <input type="number" class="form-control" id="editDiscountAmount" name="discount_amount" value="<%= coupon.discount_amount %>" required>
+              </div>
+  
+              <div class="">
+                <label for="editMinimumPurchase">Minimum Purchase:</label>
+                <input type="number" class="form-control" id="editMinimumPurchase" name="minimum_purchase" value="<%= coupon.minimum_purchase %>" required>
+              </div>
+  
+              <div class="">
+                <label for="editExpirationDate">Expiration Date:</label>
+                <input type="date" class="form-control" id="editExpirationDate" name="expiration_date" value="<%= coupon.expiration_date.toISOString().split('T')[0] %>" required>
+                <span id="editDateError" style="color: red;"></span>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Update Coupon</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% }) %>
+  
 
   <!-- Coupon Cards -->
   <div class="container mt-5">
-      <h2>Coupons</h2>
-      <!-- Check if there are coupons -->
+    <div class="d-flex justify-content-between">
+        <h2>Coupons</h2>
+        <div class="text-end">
+            <button class="btn btn-success " data-bs-toggle="modal" data-bs-target="#addCouponModal">Add Coupon</button>
+        </div>
+    </div>
+
+      
       <% if (coupons.length > 0) { %>
       <div class="row" id="couponCards">
           <% coupons.forEach(coupon => { %>
           <div class="col-md-4 mt-3">
               <div class="card">
                   <div class="card-body">
-                      <h5 class="card-title">Code: <%= coupon.code %></h5>
-                      <p class="card-text">Discount: <%= coupon.discount_amount %></p>
-                      <p class="card-text">Minimum Purchase: $<%= coupon.minimum_purchase %></p>
+                      <h5 class="card-title fw-bold">Code: <%= coupon.code %></h5>
+                      <p class="card-text">Discount: ₹<%= coupon.discount_amount %></p>
+                      <p class="card-text">Minimum Purchase: ₹<%= coupon.minimum_purchase %></p>
+                      <p class="card-text">Start Date: <%= coupon.startDate.toISOString().split('T')[0] %></p>
                       <p class="card-text">Expiration Date: <%= coupon.expiration_date.toISOString().split('T')[0] %></p>
-                      <!-- UsedBy information -->
+                      <p class="card-text">
+                        <% if (coupon.Status === 'Active') { %>
+                            <span class="text-success fw-bold">
+                                <%= coupon.Status %>
+                            </span>
+                        <% } else if (coupon.Status === 'Inactive') { %>
+                            <span class="text-danger fw-bold">
+                                <%= coupon.Status %>
+                            </span>
+                        <% } %>
+                    </p>
+                    
+                     
                       <% if (coupon.usedBy.length > 0) { %>
                       <h6>Used By:</h6>
                       <ul>
@@ -153,21 +222,21 @@
                           <% }); %>
                       </ul>
                       <% } %>
-                      <!-- Edit and Delete buttons -->
-                      <button class="btn btn-primary" onclick="editCoupon('<%= coupon._id %>')">Edit</button>
-                      <button class="btn btn-danger" onclick="deleteCoupon('<%= coupon._id %>')">Delete</button>
+                     
+                      <!-- <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal_<%= coupon._id %>">Edit</button> -->
+                      <!-- <button class="btn btn-danger" onclick="confirmDelete('<%= coupon._id %>')">Delete</button>                      -->
                   </div>
               </div>
           </div>
           <% }); %>
       </div>
       <% } else { %>
-      <!-- Display message if no coupons are available -->
+      
       <p>No coupons available. Add a coupon now!</p>
       <% } %>
-      <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addCouponModal">Add Coupon</button>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.js"
         integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 
@@ -179,6 +248,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
+        <script src="/js/coupon.js"></script>
 </body>
 
 </html>

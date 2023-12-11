@@ -79,6 +79,17 @@ const ProductsSchema = new mongoose.Schema({
   deletedAt: {
     type: Date
   },
+  IsInOffer: {
+    type: Boolean,
+    default: false,
+  },
+  offer: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Offer',
+  },
+  offerPrice: {
+    type: Number,
+  },
 });
 
 const Products = mongoose.model("Products", ProductsSchema);
