@@ -158,7 +158,6 @@ acceptReturn: async (req, res) => {
 // --------------------------------Download sales report------------------------------------------------------------------
 
 getDownloadSalesReport: async (req, res) => {
-
   console.log("reached inside of download sales report");
 
   try {
@@ -167,18 +166,21 @@ getDownloadSalesReport: async (req, res) => {
     const endDate = new Date(req.body.endDate);
 
     const orders = await Order.find({
+      Status: {
+        $nin: ["Return Pending", "Cancelled", "Return Accepted"]
+      },
       OrderDate: { $gte: startDate, $lte: endDate },
-      PaymentStatus: 'Paid',
+      PaymentStatus: { $in: ["Paid", "Pending"] }, // Corrected field name
     })
     .populate('Items.ProductId')
-    .populate('UserId'); // Adjusted this line
-    
+    .populate('UserId');
 
     const totalSales = await Order.aggregate([
       {
         $match: {
-          PaymentStatus:'Paid',
+          PaymentStatus: { $in: ["Paid", "Pending"] }, // Corrected field name
           OrderDate: { $gte: startDate, $lte: endDate },
+          Status: { $nin: ["Return Pending", "Cancelled", "Return Accepted"] },
         },
       },
       {
@@ -198,15 +200,14 @@ getDownloadSalesReport: async (req, res) => {
     } else if (format === 'excel') {
       excel.downloadExcel(req, res, orders, startDate, endDate, totalSales);
     } else {
-      
       res.status(400).json({ error: 'Unsupported file format' });
     }
   } catch (error) {
     console.log(error);
-    
     res.status(500).json({ error: 'Internal Server Error' });
   }
 },
+
 
 
 }
