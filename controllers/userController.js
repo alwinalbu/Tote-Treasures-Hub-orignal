@@ -1618,14 +1618,17 @@ module.exports = {
 
     downloadfile: async (req, res) => {
 
-        const id = req.params._id;
-
-        console.log('download id is here ', id);
-
-        const filePath = `C:/Users/DELL 7490/Desktop/project/public/pdf/${id}.pdf`
-        res.download(filePath, `invoice.pdf`);
-
-    },
+        const id = req.params.id;
+        const filePath = path.join(__dirname, 'public', 'pdf', `${id}.pdf`);
+      
+        // Send the file as a response
+        res.download(filePath, `invoice.pdf`, (err) => {
+          if (err) {
+            console.error(`Error sending file: ${err}`);
+            res.status(500).send('Internal Server Error');
+          }
+        });
+      };
 
     // ----------------------------------------------------------Retrun the order----------------------------------------------------
 
