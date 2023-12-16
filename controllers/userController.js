@@ -19,6 +19,7 @@ const passport = require('passport');
 const invoice = require('../utility/invoice')
 const Wallet = require('../models/walletSchema')
 const { generateReferralCode } = require('../utility/generateReferralCode')
+const path = require('path');
 
 
 
@@ -1618,7 +1619,8 @@ module.exports = {
 
     downloadfile: async (req, res) => {
 
-        const id = req.params.id;
+        const id = req.params._id;
+        
         const filePath = path.join(__dirname, 'public', 'pdf', `${id}.pdf`);
       
         // Send the file as a response
