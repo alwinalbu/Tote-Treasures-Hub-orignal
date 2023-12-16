@@ -1621,7 +1621,7 @@ module.exports = {
 
         const id = req.params._id;
         
-        const filePath = path.join(__dirname, 'public', 'pdf', `${id}.pdf`);
+        const filePath = path.join(__dirname,'..', 'public', 'pdf', `${id}.pdf`);
       
         // Send the file as a response
         res.download(filePath, `invoice.pdf`, (err) => {
