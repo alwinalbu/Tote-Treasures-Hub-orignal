@@ -36,6 +36,22 @@ module.exports = {
         }
     },
 
+    GetAboutpage: async(req,res)=>{
+        try {
+            res.render('user/aboutus',)
+        } catch (error) {
+            res.render('errorpage'); 
+        }
+    },
+
+    GetConatctpage:async(req,res)=>{
+        try {
+            res.render('user/contactUs',)
+        } catch (error) {
+            res.render('errorpage'); 
+        }
+    },
+
     googleSignIn: passport.authenticate('google', {
         scope: ['profile', 'email']
     }),
@@ -49,43 +65,99 @@ module.exports = {
         })(req, res);
     },
 
+    // home: async (req, res) => {
+    //     try {
+    //         const page = parseInt(req.query.page) || 1; 
+    //         const limit = 8; 
+
+    //         const categories = await Category.find();
+    //         const totalProductsCount = await Product.countDocuments({ Display: "Active" })
+
+    //         const totalPages = Math.ceil(totalProductsCount / limit);
+    //         const skip = (page - 1) * limit;
+
+    //         const products = await Product.find({ Display: "Active" })
+    //             .skip(skip)
+    //             .limit(limit)
+    //             .populate('offer');
+
+    //             const user = req.session.user
+
+    //             console.log("user inside homapage is",user)
+
+    //         const userId = req.session.user._id
+
+    //         console.log("userID in homepage is", userId);
+
+    //         const userCart = await Cart.findOne({ UserId: userId });
+
+
+    //         const totalQuantity = userCart ? userCart.Items.reduce((acc, item) => acc + item.Quantity, 0) : 0;
+
+    //         req.session.cartCount = totalQuantity;
+
+    //         const cartCount = req.session.cartCount
+
+    //         console.log('user cart count is ', cartCount);
+
+    //         res.render("user/homepage", {
+    //             user: req.session.user,
+    //             products,
+    //             categories,
+    //             currentPage: page,
+    //             totalPages,
+    //             cartCount
+    //         });
+    //     } catch (error) {
+    //         console.log(error);
+    //         // Handle the error appropriately, send an error response, etc.
+    //         res.status(404).send("An error occurred");
+    //     }
+    // },
+
     home: async (req, res) => {
         try {
             const page = parseInt(req.query.page) || 1; 
             const limit = 8; 
-
+    
+            const user = req.session.user;
+    
+            // Check if the user is logged in
+            if (!user) {
+                // Redirect to the login page or handle it in your application logic
+                res.redirect('/');
+                return;
+            }
+    
+            console.log("user inside homepage is", user);
+    
+            const userId = user._id;
+    
+            console.log("userID in homepage is", userId);
+    
             const categories = await Category.find();
-            const totalProductsCount = await Product.countDocuments({ Display: "Active" })
-
+            const totalProductsCount = await Product.countDocuments({ Display: "Active" });
+    
             const totalPages = Math.ceil(totalProductsCount / limit);
             const skip = (page - 1) * limit;
-
+    
             const products = await Product.find({ Display: "Active" })
                 .skip(skip)
                 .limit(limit)
                 .populate('offer');
-
-                const user = req.session.user
-
-                console.log("user inside homapage is",user)
-
-            const userId = req.session.user._id
-
-            console.log("userID in homepage is", userId);
-
+    
             const userCart = await Cart.findOne({ UserId: userId });
-
-
+    
             const totalQuantity = userCart ? userCart.Items.reduce((acc, item) => acc + item.Quantity, 0) : 0;
-
+    
             req.session.cartCount = totalQuantity;
-
-            const cartCount = req.session.cartCount
-
+    
+            const cartCount = req.session.cartCount;
+    
             console.log('user cart count is ', cartCount);
-
+    
             res.render("user/homepage", {
-                user: req.session.user,
+                user,
                 products,
                 categories,
                 currentPage: page,
@@ -93,11 +165,12 @@ module.exports = {
                 cartCount
             });
         } catch (error) {
-            console.log(error);
-            // Handle the error appropriately, send an error response, etc.
-            res.status(404).send("An error occurred");
+            console.error(error);
+            
+            res.status(500).render('error', { error: 'An error occurred' });
         }
     },
+    
 
 
     shop: async (req, res) => {
@@ -857,8 +930,8 @@ module.exports = {
             }
 
             // Construct the referral link
-            const referralLink = `${req.protocol}://${req.get('host')}/signup?referralCode=${user.ReferralCode}`;
-            
+            const referralLink = `https://totetreasureshub.shop/signup?referralCode=${user.ReferralCode}`;
+      
             res.render("user/userprofile", {
                 user,
                 referralLink,

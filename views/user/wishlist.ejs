@@ -84,6 +84,7 @@
     </nav>
 
 <!-- Include Wishlist Content -->
+<section style="min-height:71.7vh;">
 <div class="container-fluid mt-4">
     <!-- Wishlist Content Goes Here -->
     <% if (wishlist.length === 0) { %>
@@ -133,7 +134,7 @@
     </table>
     <% } %>
 </div>
-
+</section>
 
 
     
@@ -145,6 +146,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="/js/wishlist.js"></script>
     <script src="/js/addtocart.js"></script>
+    <%- include('../layouts/footer') %>
 </body>
 
 </html>

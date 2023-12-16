@@ -3,14 +3,14 @@
 <%- include('../partials/usercanvas') %>
 
    <!-- walletpage.ejs -->
-
+<section style="min-height: 75.5vh;">
    <div class="card">
     <div class="card-body text-center">
       <!-- Display user's wallet balance -->
       <p class="card-text"><strong>Balance:</strong> ₹<span id="balance"><%= Amount %></span></p>
     </div>
   </div>
-  
+</section>
   
   
 
@@ -24,5 +24,5 @@
     <script>
         var myOffcanvas = new bootstrap.Offcanvas(document.getElementById('staticBackdrop'));
     </script>
-      
+<%- include('../layouts/footer') %>    
 <%- include('../layouts/userfooter') %>

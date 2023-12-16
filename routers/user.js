@@ -122,6 +122,17 @@ router.route('/removefromWishlist/:_id')
 router.route("/checkCoupon")
 .post(userAuth.userTokenAuth,couponController.checkCoupon)
 
+
+// ------------------------------------------About US----------------------------------------------------------
+
+router.route("/aboutus")
+.get(userController.GetAboutpage)
+
+// ------------------------------------------Contact US----------------------------------------------------------
+
+router.route("/contactUs")
+.get(userController.GetConatctpage)
+
 // --------------------------------------Cart----------------------------------------------------------------
 
 

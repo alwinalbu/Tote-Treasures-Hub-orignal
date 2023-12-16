@@ -1,91 +1,89 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <title>Checkout</title>
-    <!-- Bootstrap CSS link -->
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href='https://fonts.googleapis.com/css?family=Italianno' rel='stylesheet'>
-    <link rel="stylesheet" type="text/css" href="/css/checkout.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
-    <!-- Font Awesome link -->
-    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CheckOut Page</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <link href='https://fonts.googleapis.com/css?family=Italianno' rel='stylesheet'>
+  <link rel="stylesheet" type="text/css" href="/css/homepage.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
 </head>
 
 <body>
-    <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: black;">
-        <div class="container-fluid d-flex justify-content-between align-items-center">
-            <a class="navbar-brand" href="">
-                <img src="/images/logo.png" style="max-height: 70px" alt="auto">
-                <h3 class="text-white fw-bold m-0 d-inline align-middle">ToteTreasures Hub</h3>
+  <nav class="navbar p-0 navbar-expand-lg">
+    <div class="container-fluid d-flex justify-content-between align-items-center" style="background-color: #000000">
+      <div class="align-self-start">
+        <a class="navbar-brand" href="/homepage">
+          <img src="/images/logo.png" style="max-height: 70px" alt="auto">
+          <h3 class="text-white fw-bold m-0 d-inline align-middle">ToteTreasures Hub</h3>
+        </a>
+      </div>
+      <!-- Move the search bar outside of the collapse button -->
+      <form class="d-flex" role="search" action="/search" method="GET">
+        <input class="form-control me-2" type="search" name="searchNames" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success" type="submit">Search</button>
+    </form>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <!-- Add the "navbar-nav" class to the <ul> for vertical alignment in the collapsed menu and ms-auto for right alignment -->
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto"> <!-- Add ms-auto class -->
+          <li class="nav-item">
+            <a class="nav-link" href="/homepage">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/shop">Shop</a>
+          </li>
+        </ul>
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/wishlist">WishList <i class="fa-solid fa-heart text-danger"></i></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/cartpage">Cart <i class="fa-solid fa-cart-shopping text-primary"></i>
+                <% if (cartCount > 0) { %>
+                <span id="cart-quantity" class="badge bg-danger"><%= cartCount %></span>
+             <% } %>
             </a>
-
-            <form class="d-flex" role="search" action="/search" method="GET">
-                <input class="form-control me-2" type="search" name="searchNames" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success" type="submit">Search</button>
-            </form>
-
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="/homepage">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="/shop">Shop</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="/wishlist">WishList  <i
-                                class="fa-solid fa-heart text-danger"></i></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/cartpage">Cart <i class="fa-solid fa-cart-shopping text-primary"></i>
-                            <% if (cartCount > 0) { %>
-                            <span id="cart-quantity" class="badge bg-danger"><%= cartCount %></span>
-                         <% } %>
-                        </a>
-                     </li>
-                    <li class="nav-item">
-                        <!-- User Authentication and Dropdown -->
-                        <% if (user) { %>
-                            <!-- User is logged in -->
-                    <li class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle text-white" id="usernameLink"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <%= user.Username %> <i class="fa-solid fa-user"></i>
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="usernameLink">
-                            <li><a class="dropdown-item" href="/profile">Profile</a></li>
-                            <li>
-                                <hr class="dropdown-divider" />
-                            </li>
-                            <li><a class="dropdown-item" href="/logout" id="logoutLink">Logout</a></li>
-                        </ul>
-                    </li>
-                    <% } else { %>
-                        <!-- User is not logged in -->
-                        <li class="nav-item">
-                            <a class="nav-link" href="/signup">
-                                <i class="fa-solid fa-user-plus"></i> Sign Up
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/login">
-                                <i class="fa-solid fa-sign-in-alt"></i> Login
-                            </a>
-                        </li>
-                        <% } %>
-                            </li>
+         </li>
+          <li class="nav-item me-5">
+            <% if (user) { %>
+              <div class="dropdown">
+                <a href="#" class="dropdown-toggle nav-link" id="usernameLink" data-bs-toggle="dropdown"
+                  aria-expanded="false">
+                  <%= user.Username %> <i class="fa-solid fa-user"></i>
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="usernameLink">
+                  <li><a class="dropdown-item" href="/profile">Profile</a></li>
+                  <li>
+                    <hr class="dropdown-divider" />
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="/logout" id="logoutLink">Logout</a>
+                  </li>
                 </ul>
-            </div>
-        </div>
-    </nav>
-
+              </div>
+              <% } else { %>
+                <div class="d-flex align-items-center"> <!-- Add a div wrapper -->
+                    <a class="nav-link" href="/signup">
+                        <i class="fa-solid fa-user-plus"></i> Sign Up
+                    </a>
+                    <span class="nav-link">|</span> <!-- Use a delimiter like "|" -->
+                    <a class="nav-link" href="/login">
+                        <i class="fa-solid fa-sign-in-alt"></i> Login
+                    </a>
+                </div>
+                <% } %>
+           </li>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
     <!-- Address Modal -->
     <div class="modal fade" id="addAddressModal" tabindex="-1" aria-labelledby="addAddressModalLabel"
         aria-hidden="true">
@@ -141,6 +139,7 @@
     </div>
 
     <!-- Checkout Form -->
+    <section style="min-height:66.8vh;">
     <form id="form-checkout">
         <div class="container custom-container main mt-5">
             <% if (messages.success) { %>
@@ -154,7 +153,7 @@
                     <%}%>
             <div class="row">
                 <div class="col-md-7">
-                    <h5 class="text-white font-weight-bold text-uppercase pb-2">Saved Addresses</h5>
+                    <h5 class="text-black font-weight-bold text-uppercase pb-2">Saved Addresses</h5>
                     <% user.Address.forEach(function(Address) { %>
                         <div class="card my-1">
                             <div class="card-body">
@@ -172,8 +171,8 @@
                     </a>
                 </div>
                 <div class="col-md-5">
-                    <h5 class="text-white font-weight-bold text-uppercase pb-2">Payment Methods</h5>
-                    <div class="card-body text-white">
+                    <h5 class="text-black font-weight-bold text-uppercase pb-2">Payment Methods</h5>
+                    <div class="card-body text-black">
 
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="paymentMethod" id="cod" value="cod" checked />
@@ -210,6 +209,7 @@
             </div>
         </div>
     </form>
+</section>
     <!-- Bootstrap and Font Awesome JS links -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
@@ -220,6 +220,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous">
         </script>
+        <%- include('../layouts/footer') %>
 </body>
 
 </html>
