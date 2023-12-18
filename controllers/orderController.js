@@ -1,9 +1,12 @@
 const Order=require('../models/orderSchema')
 const Products=require('../models/productSchema')
 const User=require('../models/userSchema')
-const pdf=require('../utility/pdf')
+// const pdf=require('../utility/pdf')
 const excel=require('../utility/execl')
 const Wallet = require('../models/walletSchema')
+const fs = require('fs');
+const ejs = require('ejs');
+const pdf = require('html-pdf');
 
 module.exports={
 
@@ -196,7 +199,23 @@ getDownloadSalesReport: async (req, res) => {
     const sum = totalSales.length > 0 ? totalSales[0].totalSales : 0;
 
     if (format === 'pdf') {
-      pdf.downloadPdf(req, res, orders, startDate, endDate, totalSales);
+      // pdf.downloadPdf(req, res, orders, startDate, endDate, totalSales);
+      const formattedStartDate = formatDate(startDate);
+      const formattedEndDate = formatDate(endDate);
+      const template = fs.readFileSync('utility/html.ejs', 'utf-8');
+  
+      const html = ejs.render(template, { orders, startDate, endDate, totalSales });
+  
+      const pdfOptions = {
+        format: 'Letter',
+        orientation: 'portrait',
+      };
+  
+      pdf.create(html, pdfOptions).toFile(`public/salespdf/sales-report-${formattedStartDate}-${formattedEndDate}.pdf`, (err, response) => {
+        if (err) return console.log(err);
+        
+        res.status(200).download(response.filename);
+      });
     } else if (format === 'excel') {
       excel.downloadExcel(req, res, orders, startDate, endDate, totalSales);
     } else {
@@ -210,4 +229,7 @@ getDownloadSalesReport: async (req, res) => {
 
 
 
+}
+function formatDate(date) {
+  return date.toLocaleDateString('en-US').replace(/[/:]/g, '-');
 }
