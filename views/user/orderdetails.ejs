@@ -114,6 +114,8 @@
                                 <th>Payment Method</th>
                                 <th>Payment Status</th>
                                 <th>Status</th>
+                                <th>Coupon Code</th>
+                                <th>Discount Amount</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -134,13 +136,15 @@
                                     <td><%= order.PaymentMethod %></td>
                                     <td><span class="rounded-sm rounded-pill" style="background-color: #f4dbde;"><%= order.PaymentStatus %></span></td>
                                     <td><%= order.Status %></td>
+                                    <td><%= order.Coupon.code || '-' %></td>
+                                    <td><%= order.DiscountAmount ? '₹' + order.DiscountAmount + '/-' : '-' %></td>
                                 </tr>
                             <% }) %>
                             <tr>
                                 <td colspan="9" class="fs-4 fw-bold text-right">
                                     Grand Total: ₹<%= order.TotalPrice %> /-
                                 </td>
-                                <td colspan="4"></td> <!-- Empty columns to align with the table structure -->
+                                <td colspan="2"></td> <!-- Empty columns to align with the table structure -->
                             </tr>
                         </tbody>
                     </table>
@@ -148,7 +152,8 @@
             <% } %>
         </div>
     </div>
-
+    
+    
     <style>
         body {
             background-color: #f8f9fa;

@@ -218,7 +218,7 @@
                       <h6>Used By:</h6>
                       <ul>
                           <% coupon.usedBy.forEach(use => { %>
-                          <li>User ID: <%= use.userId %>, Coupon Code: <%= use.couponCode %>, Status: <%= use.status %></li>
+                          <li>User: <%= use.userId.Email %></li>
                           <% }); %>
                       </ul>
                       <% } %>

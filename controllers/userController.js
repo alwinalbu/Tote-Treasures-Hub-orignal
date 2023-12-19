@@ -1153,29 +1153,52 @@ module.exports = {
     },
     
 
-
     getOrderDetails: async (req, res) => {
         try {
             const userId = req.session.user.user;
-
+    
             console.log("userid is", userId);
-
+    
             const user = await User.findById(userId);
-
+    
             const orderId = req.params._id;
-
-            const order = await Order.findById(orderId).populate("Items.ProductId");
-
+    
+            // Explicitly populate the Coupon field to get the coupon details
+            const order = await Order.findById(orderId).populate([
+                {
+                    path: "Items.ProductId",
+                    model: "Products" // Make sure to use the correct model name
+                },
+                {
+                    path: "Coupon",
+                    model: "Coupon" // Use the correct model name for Coupon
+                }
+            ]);
+    
             const addressId = order.Address._id;
             console.log(addressId, "ADDRESSiD");
-
+    
             console.log(order, "order");
+    
+            // Check if coupon information exists
+            if (order.Coupon) {
+                const couponCode = order.Coupon.code;
+                console.log("coupon code is ", couponCode);
+    
+                const discountAmount = order.DiscountAmount;
+                console.log(discountAmount, "discount amount");
+            } else {
+                console.log("No coupon applied to this order");
+            }
+    
             res.render("user/orderdetails", { user, order });
         } catch (error) {
             console.log(error);
             res.render("errorpage", { error: "Internal Server Error" });
         }
     },
+    
+    
 
     // -------------------------------------------------------order cancel---------------------------------------------
 
@@ -1343,11 +1366,14 @@ module.exports = {
                         // Check if the coupon is still valid
                         if (currentDate >= couponData.startDate && currentDate <= couponData.expiration_date) {
                             couponData.usedBy.push({
-                                userId: userId,
+                                userId:userId,
                                 couponCode: couponCode,
                             });
 
                             await couponData.save();
+
+                            newOrders.Coupon = couponData._id;
+                            newOrders.DiscountAmount = couponData.discount_amount;
 
                             // Remove the temporary coupon info from the session after successful application
                             delete req.session.temporaryCouponInfo;
@@ -1589,32 +1615,45 @@ module.exports = {
     // ------------------------------------------------download invoice------------------------------------------------------------------------------------
 
     downloadInvoice: async (req, res) => {
-
         try {
-            const orderData = await Order.findOne({
-                _id: req.body.orderId,
-            })
-                .populate("Address")
-                .populate('Items.ProductId');
-
-            const status = orderData.Status;
-            const paymentMethod = orderData.PaymentMethod;
-
-            console.log('oderdata for download is ', orderData);
-
-            const filePath = await invoice.order(orderData, status, paymentMethod)
-
-            console.log('file path here is for download is  ', filePath);
-
-            const orderId = orderData._id;
-
-            res.json({ orderId });
-
+          const orderData = await Order.findOne({
+            _id: req.body.orderId,
+          })
+            .populate("Address")
+            .populate('Items.ProductId')
+            .populate('Coupon'); // Populate the Coupon field
+      
+          const status = orderData.Status;
+          const paymentMethod = orderData.PaymentMethod;
+      
+          console.log('order data for download is ', orderData);
+      
+          // Extract coupon information
+          let couponCode = '';
+          let discountAmount = 0;
+      
+          if (orderData.Coupon) {
+            const couponData = await Coupon.findById(orderData.Coupon);
+            if (couponData) {
+              couponCode = couponData.code;
+              discountAmount = couponData.discount_amount;
+            }
+          }
+      
+          const filePath = await invoice.order(orderData, status, paymentMethod, couponCode, discountAmount);
+      
+          console.log('file path here for download is  ', filePath);
+      
+          const orderId = orderData._id;
+      
+          res.json({ orderId });
+      
         } catch (error) {
-            console.error("Error in downloadInvoice:", error);
-            res.status(500).json({ error: "Internal Server Error" });
+          console.error("Error in downloadInvoice:", error);
+          res.status(500).json({ error: "Internal Server Error" });
         }
-    },
+      },
+      
 
 
     downloadfile: async (req, res) => {
