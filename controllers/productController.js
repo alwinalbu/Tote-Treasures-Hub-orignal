@@ -13,59 +13,11 @@ module.exports = {
     getAddProduct: async (req, res) => {
         const categories = await Category.find();
         const brands = await Brand.find();
-        res.render("admin/addProduct", { categories, brands,messages: req.flash() });
+        res.render("admin/addproduct", { categories, brands,messages: req.flash() });
       },
 
 
-      // postAddProduct: async (req, res) => {
-      //   try {
-      //     console.log(req.files);
-      //     const images = [];
-      //     const category = await Category.findOne({ Name: req.body.Category });
-      //     const BrandName = await Brand.findOne({ Name: req.body.BrandName });
-      //     for (let i = 1; i <= 3; i++) {
-      //       const fieldName = `image${i}`;
-      //       if (req.files[fieldName] && req.files[fieldName][0]) {
-      //         images.push(req.files[fieldName][0].filename);
-      //       }
-      //     }
-      //     let Status;
-      
-      //     if (req.body.AvailableQuantity <= 0) {
-      //       Status = "Out of Stock";
-      //     } else {
-      //       Status = "In Stock";
-      //     }
-      
-      //     // Data validation can be added here
-      
-      //     const newProduct = new Product({
-      //       ProductName: req.body.ProductName,
-      //       Price: req.body.Price,
-      //       Description: req.body.Description,
-      //       BrandName: BrandName._id,
-      //       Tags: req.body.Tags,
-      //       AvailableQuantity: req.body.AvailableQuantity,
-      //       Category: category._id,
-      //       Status: Status,
-      //       Display: "Active",
-      //       Specification1: req.body.Specification1,
-      //       DiscountAmount: req.body.DiscountAmount,
-      //       UpdatedOn: moment(new Date()).format("llll"),
-      //       images: images,
-      //     });
-      
-         
-      //     await newProduct.save();
-      
-      //     req.flash("success", "Product is Added Successfully");
-      //     res.redirect("/admin/product");
-      //   } catch (error) {
-      //     req.flash('error', `${error}`);
-      //     res.redirect("/admin/addProduct");
-      //   }
-      // },
-
+     
       postAddProduct: async (req, res) => {
         try {
             console.log(req.files);
@@ -199,7 +151,7 @@ module.exports = {
         const product = await Product.findOne({ _id }).populate('Category BrandName')
         console.log(product);
     
-        res.render("admin/editProduct", {
+        res.render("admin/editproduct", {
           product: product,
           categories,
           brands,

@@ -38,7 +38,7 @@ module.exports={
           const orderDetails = await Order.findOne({ _id: orderId }).populate(
             "Items.ProductId"
           );
-          res.render("admin/orderDetailspage", { order: orderDetails });
+          res.render("admin/orderdetailspage", { order: orderDetails });
         } catch (error) {
           console.log(error);
         }

@@ -22,7 +22,7 @@ module.exports = {
         const categories = await Category.find({}).skip(skip).limit(perPage).sort({ Name: 1 });
         const totalCount = await Category.countDocuments();
 
-        res.render("admin/Categorypage", { 
+        res.render("admin/categorypage", { 
           messages: req.flash(),
           categories,
           currentPage: page,
@@ -109,7 +109,7 @@ module.exports = {
         }
     
         
-        res.render('user/searchResults', { user: req.session.user ?? null, products});
+        res.render('user/searchresults', { user: req.session.user ?? null, products});
       } catch (error) {
         
         console.error(error);

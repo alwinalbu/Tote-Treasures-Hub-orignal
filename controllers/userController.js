@@ -47,7 +47,7 @@ module.exports = {
 
     GetConatctpage:async(req,res)=>{
         try {
-            res.render('user/contactUs',)
+            res.render('user/contactus',)
         } catch (error) {
             res.render('errorpage'); 
         }
@@ -66,55 +66,7 @@ module.exports = {
         })(req, res);
     },
 
-    // home: async (req, res) => {
-    //     try {
-    //         const page = parseInt(req.query.page) || 1; 
-    //         const limit = 8; 
-
-    //         const categories = await Category.find();
-    //         const totalProductsCount = await Product.countDocuments({ Display: "Active" })
-
-    //         const totalPages = Math.ceil(totalProductsCount / limit);
-    //         const skip = (page - 1) * limit;
-
-    //         const products = await Product.find({ Display: "Active" })
-    //             .skip(skip)
-    //             .limit(limit)
-    //             .populate('offer');
-
-    //             const user = req.session.user
-
-    //             console.log("user inside homapage is",user)
-
-    //         const userId = req.session.user._id
-
-    //         console.log("userID in homepage is", userId);
-
-    //         const userCart = await Cart.findOne({ UserId: userId });
-
-
-    //         const totalQuantity = userCart ? userCart.Items.reduce((acc, item) => acc + item.Quantity, 0) : 0;
-
-    //         req.session.cartCount = totalQuantity;
-
-    //         const cartCount = req.session.cartCount
-
-    //         console.log('user cart count is ', cartCount);
-
-    //         res.render("user/homepage", {
-    //             user: req.session.user,
-    //             products,
-    //             categories,
-    //             currentPage: page,
-    //             totalPages,
-    //             cartCount
-    //         });
-    //     } catch (error) {
-    //         console.log(error);
-    //         // Handle the error appropriately, send an error response, etc.
-    //         res.status(404).send("An error occurred");
-    //     }
-    // },
+   
 
     home: async (req, res) => {
         try {
@@ -272,10 +224,6 @@ module.exports = {
     },
 
 
-    // signup: (req, res) => {
-    //     const error = req.flash('error'); 
-    //     res.render("user/signup", { err: error, user: '' });
-    // },
 
     signup: (req, res) => {
         const referralCode = req.query.referralCode;
@@ -365,40 +313,14 @@ module.exports = {
                         console.error(err);
                     });
             }, 60000);
-            res.render("user/emailVerification", { messages: req.flash(), user: '' });
+            res.render("user/emailverification", { messages: req.flash(), user: '' });
         } catch (error) {
             console.log(error);
             res.redirect("/signup");
         }
     },
 
-    // postEmailVerification: async (req, res) => {
-    //     try {
-    //         const userData = await User.create(req.session.user);
-    //         if (userData) {
-    //             const accessToken = jwt.sign(
-    //                 { user: userData._id },
-    //                 process.env.ACCESS_TOKEN_SECRET,
-    //                 { expiresIn: 60 * 60 }
-    //             );
-    //             res.cookie("userjwt", accessToken, { maxAge: 60 * 1000 * 60 });
-    //             res.json({
-    //                 success: true,
-    //                 user: req.session.user,
-    //                 redirectUrl: '/login',
-    //               });
-
-    //         } else {
-    //             req.flash("error", "Invalid Email Address");
-    //             console.log("Invalid Email Address");
-    //             res.redirect('/signup');
-    //         }
-    //     } catch (error) {
-    //         console.error(error);
-    //         res.redirect('/signup');
-    //     }
-    // },
-
+ 
 
     postEmailVerification: async (req, res) => {
         try {
@@ -536,7 +458,7 @@ module.exports = {
     },
 
     forgotpassword: (req, res) => {
-        res.render("user/forgotPassword", {
+        res.render("user/forgotpassword", {
             messages: req.flash(), user: req.session.user
         });
     },
@@ -599,7 +521,7 @@ module.exports = {
                         console.error(err);
                     });
             }, 60000);
-            res.render("user/otpVerification", { messages: req.flash(), user: req.session.user });
+            res.render("user/otpverification", { messages: req.flash(), user: req.session.user });
         } catch (error) {
             console.log(error);
             res.redirect("/login");
@@ -659,7 +581,7 @@ module.exports = {
     },
 
     getCreateNewPassword: async (req, res) => {
-        res.render('user/changePassword', { messages: req.flash(), user: req.session.user })
+        res.render('user/changepassword', { messages: req.flash(), user: req.session.user })
     },
 
     postCreateNewPassword: async (req, res) => {
@@ -698,7 +620,7 @@ module.exports = {
         const product = await Product.findOne({ _id }).populate('Category BrandName');
         console.log(product);
         
-        res.render("./user/productViewDetailspage", {
+        res.render("./user/productviewdetailspage", {
             product,
             categories,
             brands,
@@ -724,7 +646,7 @@ module.exports = {
 
             console.log("filtered products:", filteredProducts);
 
-            res.render('user/searchResults', { user: req.session.user ?? null, products: filteredProducts});
+            res.render('user/searchresults', { user: req.session.user ?? null, products: filteredProducts});
 
         } catch (error) {
             console.log(error);
@@ -1003,7 +925,7 @@ module.exports = {
         const userId = req.session.user.user;
         const user = await User.findById(userId);
         console.log(user.Address);
-        res.render("user/editAddress", { user });
+        res.render("user/editaddress", { user });
     },
 
     //   -----------------------------------------------add new address------------------------------------------
@@ -1609,7 +1531,7 @@ module.exports = {
         const userId = req.session.user.user;
         const user = await User.findById(userId);
         
-        res.render("user/orderSuccess", { user });
+        res.render("user/ordersuccess", { user });
     },
 
     // ------------------------------------------------download invoice------------------------------------------------------------------------------------

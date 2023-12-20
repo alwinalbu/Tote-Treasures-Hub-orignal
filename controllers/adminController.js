@@ -34,7 +34,7 @@ module.exports = {
 
       getLogin: async (req, res) => {
         try {
-            res.render("admin/adminLogin", { admin: req.session.admin });
+            res.render("admin/adminlogin", { admin: req.session.admin });
         } catch (error) {
             console.log(error);
         }
@@ -274,7 +274,7 @@ getCount: async (req, res) => {
           const totalCount = await User.countDocuments();
 
           // console.log("users are :",users)
-          res.render("admin/manageUsers", {
+          res.render("admin/manageusers", {
             users,
             adminName,
             currentPage: page,
