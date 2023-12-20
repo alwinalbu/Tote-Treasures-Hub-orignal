@@ -34,7 +34,7 @@ module.exports = {
 
       getLogin: async (req, res) => {
         try {
-            res.render("admin/adminlogin", { admin: req.session.admin });
+            res.render("admin/adminLogin", { admin: req.session.admin });
         } catch (error) {
             console.log(error);
         }
