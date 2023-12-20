@@ -925,7 +925,7 @@ module.exports = {
         const userId = req.session.user.user;
         const user = await User.findById(userId);
         console.log(user.Address);
-        res.render("user/editaddress", { user });
+        res.render("user/editAddress", { user });
     },
 
     //   -----------------------------------------------add new address------------------------------------------
