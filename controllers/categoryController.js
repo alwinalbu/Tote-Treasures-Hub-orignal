@@ -22,7 +22,7 @@ module.exports = {
         const categories = await Category.find({}).skip(skip).limit(perPage).sort({ Name: 1 });
         const totalCount = await Category.countDocuments();
 
-        res.render("admin/categorypage", { 
+        res.render("admin/Categorypage", { 
           messages: req.flash(),
           categories,
           currentPage: page,
