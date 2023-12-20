@@ -646,7 +646,7 @@ module.exports = {
 
             console.log("filtered products:", filteredProducts);
 
-            res.render('user/searchresults', { user: req.session.user ?? null, products: filteredProducts});
+            res.render('user/searchResults', { user: req.session.user ?? null, products: filteredProducts});
 
         } catch (error) {
             console.log(error);
