@@ -620,7 +620,7 @@ module.exports = {
         const product = await Product.findOne({ _id }).populate('Category BrandName');
         console.log(product);
         
-        res.render("user/productviewdetailspage", {
+        res.render("user/productViewDetailspage", {
             product,
             categories,
             brands,
