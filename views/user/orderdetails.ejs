@@ -136,7 +136,13 @@
                                     <td><%= order.PaymentMethod %></td>
                                     <td><span class="rounded-sm rounded-pill" style="background-color: #f4dbde;"><%= order.PaymentStatus %></span></td>
                                     <td><%= order.Status %></td>
-                                    <td><%= order.Coupon.code || '-' %></td>
+                                    <td>
+                                        <% if (order.Coupon && order.Coupon.code) { %>
+                                          <%= order.Coupon.code %>
+                                        <% } else { %>
+                                          -
+                                        <% } %>
+                                      </td>                                      
                                     <td><%= order.DiscountAmount ? '₹' + order.DiscountAmount + '/-' : '-' %></td>
                                 </tr>
                             <% }) %>

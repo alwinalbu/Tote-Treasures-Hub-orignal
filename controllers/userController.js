@@ -1114,6 +1114,7 @@ module.exports = {
             }
     
             res.render("user/orderdetails", { user, order });
+            console.log(order,"@@@@@@@@@");
         } catch (error) {
             console.log(error);
             res.render("errorpage", { error: "Internal Server Error" });
