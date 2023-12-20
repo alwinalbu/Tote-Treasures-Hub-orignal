@@ -109,7 +109,7 @@ module.exports = {
         }
     
         
-        res.render('user/searchresults', { user: req.session.user ?? null, products});
+        res.render('user/searchResults', { user: req.session.user ?? null, products});
       } catch (error) {
         
         console.error(error);
