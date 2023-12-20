@@ -13,7 +13,7 @@ module.exports = {
     getAddProduct: async (req, res) => {
         const categories = await Category.find();
         const brands = await Brand.find();
-        res.render("admin/addproduct", { categories, brands,messages: req.flash() });
+        res.render("admin/addProduct", { categories, brands,messages: req.flash() });
       },
 
 
