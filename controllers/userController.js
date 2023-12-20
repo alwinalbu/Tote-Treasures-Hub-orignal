@@ -1531,7 +1531,7 @@ module.exports = {
         const userId = req.session.user.user;
         const user = await User.findById(userId);
         
-        res.render("user/ordersuccess", { user });
+        res.render("user/orderSuccess", { user });
     },
 
     // ------------------------------------------------download invoice------------------------------------------------------------------------------------
