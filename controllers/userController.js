@@ -313,7 +313,7 @@ module.exports = {
                         console.error(err);
                     });
             }, 60000);
-            res.render("user/emailverification", { messages: req.flash(), user: '' });
+            res.render("user/emailVerification", { messages: req.flash(), user: '' });
         } catch (error) {
             console.log(error);
             res.redirect("/signup");
