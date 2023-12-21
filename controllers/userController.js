@@ -1128,11 +1128,15 @@ module.exports = {
     cancelOrder: async (req, res) => {
         const orderId = req.params._id;
         try {
-            const order = await Order.findById(orderId);
+            const order = await Order.findById(orderId).populate('UserId');
 
             if (!order) {
                 return res.status(404).json({ success: false, message: "Order not found" });
             }
+            const userId = order.UserId;
+
+            if(order.PaymentMethod==='cod')
+            {
 
             if (order.Status === "Order Placed" || order.Status === "Shipped") {
 
@@ -1148,12 +1152,42 @@ module.exports = {
                 }
 
                 order.Status = "Cancelled";
+                order.PaymentStatus = "Cancelled - No Payment Required";
                 await order.save();
 
                 return res.status(200).json({ success: true, message: "Order successfully cancelled" });
+
+            }} else if (order.PaymentMethod==='Online' || order.PaymentMethod==='wallet') {
+
+
+                const updatedOrder = await Order.findByIdAndUpdate(
+                    { _id: orderId },
+                    { $set: { Status: 'Return Accepted' } },
+                    { new: true }
+                  );
+                  
+                  const TotalPrice=updatedOrder.TotalPrice
+              
+                  console.log("User Return TOTAL PRICE is :",TotalPrice);
+              
+                  const wallet=await Wallet.findOneAndUpdate({UserID:userId},{$inc:{Amount:TotalPrice}})
+              
+                   console.log("wallet here UPDATED",wallet);
+                   
+                  updatedOrder.PaymentStatus = "Refund To Wallet";
+                  
+                  for (const item of updatedOrder.Items) {
+                    const product = await Product.findById(item.ProductId).exec(); 
+                    product.AvailableQuantity += item.Quantity;
+                    await product.save();
+              
+                    console.log("quantity got updated", product.AvailableQuantity);
+                  }
+              
+                  await updatedOrder.save();
             } else {
                 return res.status(400).json({ success: false, message: "Order cannot be cancelled" });
-            }
+            } 
         } catch (error) {
             console.error("Error cancelling the order:", error);
             return res.status(500).json({ success: false, message: "Error cancelling the order" });

@@ -44,7 +44,7 @@ module.exports = {
     // const page = await browser.newPage();
 
     const browser = await puppeteer.launch({ headless: true }); // or headless: false if you want to see the browser
-const page = await browser.newPage();
+    const page = await browser.newPage();
 
     // Set the content of the page with the rendered HTML
     await page.setContent(html);
